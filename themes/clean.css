@@ -1,0 +1,22 @@
+:root,
+[data-theme="clean"] {
+  --color-bg: #f6f4ef;
+  --color-surface: #ffffff;
+  --color-text: #1d2528;
+  --color-muted: #657076;
+  --color-accent: #24756f;
+  --color-accent-strong: #165a56;
+  --color-border: #d8dedc;
+  --color-inverse: #ffffff;
+  --font-display: "Aptos Display", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Aptos", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  --radius-small: 0.4rem;
+  --radius-medium: 0.8rem;
+  --radius-large: 1.4rem;
+  --shadow-card: 0 1rem 3rem rgb(29 37 40 / 0.1);
+  --motion-fast: 160ms;
+  --motion-enter: 420ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+

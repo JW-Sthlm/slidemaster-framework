@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en" data-theme="clean">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slidemaster Deck</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../themes/clean.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      overflow: hidden;
+    }
+    button { font: inherit; }
+    .deck { position: relative; width: 100vw; height: 100vh; }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      padding: clamp(2rem, 6vw, 6rem);
+      background: var(--color-bg);
+      overflow: auto;
+    }
+    .slide.is-active { display: grid; animation: enter var(--motion-enter) var(--ease-out); }
+    .slide.hero, .slide.close { place-items: center; text-align: center; }
+    .slide.contrast { background: var(--color-accent-strong); color: var(--color-inverse); }
+    .slide-inner { width: min(100%, 76rem); margin: auto; }
+    .hero .slide-inner, .close .slide-inner { max-width: 66rem; }
+    .eyebrow {
+      margin: 0 0 1rem;
+      color: var(--color-accent);
+      font-size: clamp(0.75rem, 1.2vw, 1rem);
+      font-weight: 800;
+      letter-spacing: 0.14em;
+    }
+    .contrast .eyebrow { color: var(--color-inverse); opacity: 0.75; }
+    h1, h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      text-wrap: balance;
+    }
+    h1 { font-size: clamp(3rem, 7.5vw, 7rem); }
+    h2 { font-size: clamp(2.4rem, 5.5vw, 5.5rem); max-width: 18ch; }
+    .hero h2, .close h2 { max-width: none; }
+    .lead {
+      max-width: 54rem;
+      margin: 1.4rem 0 0;
+      color: var(--color-muted);
+      font-size: clamp(1.1rem, 2vw, 1.75rem);
+      line-height: 1.45;
+    }
+    .hero .lead, .close .lead { margin-inline: auto; }
+    .contrast .lead { color: var(--color-inverse); opacity: 0.78; }
+    .component { margin-top: clamp(2rem, 5vh, 4rem); }
+    .statement {
+      color: var(--color-accent-strong);
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 4vw, 3.8rem);
+      font-weight: 750;
+    }
+    .stat-grid, .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+      gap: 1rem;
+    }
+    .stat, .card {
+      padding: clamp(1.3rem, 3vw, 2.4rem);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-medium);
+      background: var(--color-surface);
+      box-shadow: var(--shadow-card);
+    }
+    .stat-value {
+      color: var(--color-accent-strong);
+      font-family: var(--font-mono);
+      font-size: clamp(2.5rem, 6vw, 5.6rem);
+      font-weight: 800;
+      line-height: 1;
+    }
+    .stat-label, .card p { color: var(--color-muted); line-height: 1.5; }
+    .card h3 { margin: 0 0 0.5rem; font-size: 1.35rem; }
+    .card p { margin: 0; font-size: 1.05rem; }
+    .process {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+      gap: 0.75rem;
+      counter-reset: step;
+    }
+    .process-step {
+      counter-increment: step;
+      padding: 1.2rem;
+      border: 1px solid currentColor;
+      border-radius: var(--radius-medium);
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      font-weight: 750;
+    }
+    .process-step::before {
+      content: counter(step, decimal-leading-zero);
+      display: block;
+      margin-bottom: 1.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+    .quote {
+      max-width: 52rem;
+      padding-left: 1.5rem;
+      border-left: 0.4rem solid var(--color-accent);
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      line-height: 1.16;
+    }
+    .quote cite { display: block; margin-top: 1rem; font-family: var(--font-body); font-size: 1rem; }
+    .action-list { display: grid; gap: 0.8rem; max-width: 50rem; margin-inline: auto; text-align: left; }
+    .action-item {
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-medium);
+      background: var(--color-surface);
+      color: var(--color-text);
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+    }
+    .footer { margin-top: 2rem; color: var(--color-muted); font-size: 0.85rem; }
+    .contrast .footer { color: var(--color-inverse); opacity: 0.65; }
+    .controls {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-large);
+      background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+      backdrop-filter: blur(12px);
+    }
+    .controls button {
+      min-width: 2.5rem;
+      min-height: 2.5rem;
+      border: 0;
+      border-radius: var(--radius-small);
+      background: transparent;
+      color: var(--color-text);
+      cursor: pointer;
+    }
+    .controls button:hover { background: var(--color-bg); }
+    .counter { min-width: 4.5rem; text-align: center; font-family: var(--font-mono); font-size: 0.8rem; }
+    .progress {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 11;
+      height: 0.3rem;
+      background: var(--color-border);
+    }
+    .progress span {
+      display: block;
+      height: 100%;
+      background: var(--color-accent);
+      transition: width var(--motion-fast) ease;
+    }
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(0.8rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+    }
+    @media (max-width: 700px) {
+      body { overflow: auto; }
+      .slide { padding: 2rem 1.2rem 5rem; }
+      .controls { left: 50%; right: auto; transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" id="deck" aria-live="polite"></main>
+  <nav class="controls" aria-label="Slide navigation">
+    <button id="previous" type="button" aria-label="Previous slide">&#8592;</button>
+    <span class="counter" id="counter"></span>
+    <button id="next" type="button" aria-label="Next slide">&#8594;</button>
+  </nav>
+  <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+
+  <script type="application/json" id="deck-spec">
+  {
+    "meta": {
+      "title": "A portable presentation shell",
+      "subtitle": "Replace this embedded JSON with a validated deck specification",
+      "author": "Presentation Author",
+      "date": "2026-01-15",
+      "language": "en",
+      "theme": "clean",
+      "durationMinutes": 6
+    },
+    "slides": [
+      {
+        "id": "opening",
+        "type": "hero",
+        "label": "Opening",
+        "act": "Frame",
+        "timing": "2m",
+        "energy": "calm",
+        "content": {
+          "eyebrow": "SLIDEMASTER FRAMEWORK",
+          "heading": "Start with the story",
+          "lead": "The JSON holds the content. The shell handles the presentation.",
+          "component": "statement",
+          "data": { "text": "One source of truth." },
+          "footer": ""
+        },
+        "notes": {
+          "do": "Pause before advancing.",
+          "say": "This shell turns a structured deck specification into a browser presentation."
+        }
+      },
+      {
+        "id": "building-blocks",
+        "type": "standard",
+        "label": "Blocks",
+        "act": "Explain",
+        "timing": "2m",
+        "energy": "steady",
+        "content": {
+          "eyebrow": "COMPONENTS",
+          "heading": "Use a small visual vocabulary",
+          "lead": "Choose the component that supports the idea.",
+          "component": "card-grid",
+          "data": {
+            "items": [
+              { "title": "Evidence", "text": "Use stats when the number is the point." },
+              { "title": "Options", "text": "Use cards when the audience must compare." },
+              { "title": "Sequence", "text": "Use a process when order matters." }
+            ]
+          },
+          "footer": ""
+        },
+        "notes": {
+          "do": "",
+          "say": "A limited component set keeps the deck coherent and easier to review."
+        }
+      },
+      {
+        "id": "next-step",
+        "type": "close",
+        "label": "Close",
+        "act": "Act",
+        "timing": "2m",
+        "energy": "calm",
+        "content": {
+          "eyebrow": "YOUR DECK",
+          "heading": "Validate, open, present",
+          "lead": "Use the example specification as your starting point.",
+          "component": "action-list",
+          "data": {
+            "items": [
+              "Write the central claim.",
+              "Create and validate the specification.",
+              "Review every slide at presentation size."
+            ]
+          },
+          "footer": "Press the arrow keys to navigate"
+        },
+        "notes": {
+          "do": "End on the first action.",
+          "say": "Start with the claim. The format and theme should support it."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script>
+    (() => {
+      const spec = JSON.parse(document.getElementById("deck-spec").textContent);
+      const deck = document.getElementById("deck");
+      const counter = document.getElementById("counter");
+      const progress = document.getElementById("progress");
+      let current = Math.max(0, spec.slides.findIndex(slide => `#${slide.id}` === location.hash));
+
+      document.title = spec.meta.title;
+      document.documentElement.lang = spec.meta.language || "en";
+      document.documentElement.dataset.theme = spec.meta.theme || "clean";
+
+      const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      })[character]);
+
+      function componentHtml(component, data) {
+        if (component === "statement") return `<div class="statement">${escapeHtml(data.text)}</div>`;
+        if (component === "stat-grid") {
+          return `<div class="stat-grid">${data.items.map(item =>
+            `<article class="stat"><div class="stat-value">${escapeHtml(item.value)}</div><div class="stat-label">${escapeHtml(item.label)}</div></article>`
+          ).join("")}</div>`;
+        }
+        if (component === "card-grid") {
+          return `<div class="card-grid">${data.items.map(item =>
+            `<article class="card"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.text)}</p></article>`
+          ).join("")}</div>`;
+        }
+        if (component === "process") {
+          return `<div class="process">${data.steps.map(step =>
+            `<div class="process-step">${escapeHtml(step)}</div>`
+          ).join("")}</div>`;
+        }
+        if (component === "quote") {
+          const attribution = data.attribution ? `<cite>${escapeHtml(data.attribution)}</cite>` : "";
+          return `<blockquote class="quote">${escapeHtml(data.text)}${attribution}</blockquote>`;
+        }
+        if (component === "action-list") {
+          return `<div class="action-list">${data.items.map(item =>
+            `<div class="action-item">${escapeHtml(item)}</div>`
+          ).join("")}</div>`;
+        }
+        return "";
+      }
+
+      deck.innerHTML = spec.slides.map((slide, index) => {
+        const content = slide.content;
+        const headingTag = index === 0 ? "h1" : "h2";
+        return `
+          <section class="slide ${escapeHtml(slide.type)}" id="${escapeHtml(slide.id)}"
+            data-index="${index}" aria-label="${escapeHtml(slide.label)}">
+            <div class="slide-inner">
+              ${content.eyebrow ? `<p class="eyebrow">${escapeHtml(content.eyebrow)}</p>` : ""}
+              <${headingTag}>${escapeHtml(content.heading)}</${headingTag}>
+              ${content.lead ? `<p class="lead">${escapeHtml(content.lead)}</p>` : ""}
+              <div class="component">${componentHtml(content.component, content.data)}</div>
+              ${content.footer ? `<p class="footer">${escapeHtml(content.footer)}</p>` : ""}
+            </div>
+          </section>`;
+      }).join("");
+
+      const slides = [...deck.querySelectorAll(".slide")];
+      function show(index, updateHash = true) {
+        current = Math.min(Math.max(index, 0), slides.length - 1);
+        slides.forEach((slide, slideIndex) => {
+          slide.classList.toggle("is-active", slideIndex === current);
+          slide.setAttribute("aria-hidden", slideIndex === current ? "false" : "true");
+        });
+        counter.textContent = `${String(current + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+        progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+        if (updateHash) history.replaceState(null, "", `#${spec.slides[current].id}`);
+      }
+
+      document.getElementById("previous").addEventListener("click", () => show(current - 1));
+      document.getElementById("next").addEventListener("click", () => show(current + 1));
+      window.addEventListener("keydown", event => {
+        if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+          event.preventDefault();
+          show(current + 1);
+        }
+        if (["ArrowLeft", "PageUp"].includes(event.key)) {
+          event.preventDefault();
+          show(current - 1);
+        }
+        if (event.key === "Home") show(0);
+        if (event.key === "End") show(slides.length - 1);
+      });
+      window.addEventListener("hashchange", () => {
+        const index = spec.slides.findIndex(slide => `#${slide.id}` === location.hash);
+        if (index >= 0) show(index, false);
+      });
+      show(current);
+    })();
+  </script>
+</body>
+</html>

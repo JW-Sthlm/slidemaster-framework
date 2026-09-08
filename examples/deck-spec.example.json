@@ -1,0 +1,147 @@
+{
+  "meta": {
+    "title": "From scattered updates to clear decisions",
+    "subtitle": "A practical operating model for project reviews",
+    "author": "Alex Morgan",
+    "date": "2026-01-15",
+    "language": "en",
+    "theme": "clean",
+    "durationMinutes": 12,
+    "audience": "Team leads and project owners",
+    "centralClaim": "A project review should produce a decision, not another status summary."
+  },
+  "slides": [
+    {
+      "id": "opening",
+      "type": "hero",
+      "label": "Opening",
+      "act": "Frame",
+      "timing": "1m",
+      "energy": "calm",
+      "content": {
+        "eyebrow": "PROJECT REVIEWS",
+        "heading": "The meeting ended. What changed?",
+        "lead": "If nobody can name the decision, the review was only a report.",
+        "component": "statement",
+        "data": {
+          "text": "Make the decision visible."
+        },
+        "footer": ""
+      },
+      "notes": {
+        "do": "Pause after the question.",
+        "say": "Think about your last project review. You heard updates, saw several charts, and probably discussed risks. But what decision did the meeting produce?"
+      }
+    },
+    {
+      "id": "cost-of-ambiguity",
+      "type": "standard",
+      "label": "Cost",
+      "act": "Frame",
+      "timing": "2m",
+      "energy": "steady",
+      "content": {
+        "eyebrow": "THE COST",
+        "heading": "Ambiguity creates work after the meeting",
+        "lead": "People leave with different interpretations, so the team pays twice.",
+        "component": "stat-grid",
+        "data": {
+          "items": [
+            { "value": "3", "label": "versions of the next step" },
+            { "value": "2x", "label": "the coordination effort" },
+            { "value": "0", "label": "decisions recorded" }
+          ]
+        },
+        "footer": "Illustrative example"
+      },
+      "notes": {
+        "do": "Point to the zero last.",
+        "say": "The numbers are illustrative, but the pattern is common. A vague review creates follow-up messages, side meetings, and rework. The important number is zero: no decision recorded."
+      }
+    },
+    {
+      "id": "decision-loop",
+      "type": "contrast",
+      "label": "Model",
+      "act": "Model",
+      "timing": "3m",
+      "energy": "high",
+      "content": {
+        "eyebrow": "A SIMPLE LOOP",
+        "heading": "Evidence should lead to a named decision",
+        "lead": "Use the same sequence for every review.",
+        "component": "process",
+        "data": {
+          "steps": ["Signal", "Choice", "Owner", "Date"]
+        },
+        "footer": ""
+      },
+      "notes": {
+        "do": "Move from left to right.",
+        "say": "Start with the signal that matters. Put the real choice on the screen. Name one owner, then set a date. Four steps are enough for most project reviews."
+      }
+    },
+    {
+      "id": "review-format",
+      "type": "standard",
+      "label": "Format",
+      "act": "Model",
+      "timing": "3m",
+      "energy": "steady",
+      "content": {
+        "eyebrow": "THE FORMAT",
+        "heading": "Design each slide around the decision",
+        "lead": "The slide becomes a working surface for the room.",
+        "component": "card-grid",
+        "data": {
+          "items": [
+            {
+              "title": "What changed?",
+              "text": "Show the new signal, not a full history."
+            },
+            {
+              "title": "What is the choice?",
+              "text": "Write the options in plain language."
+            },
+            {
+              "title": "Who acts next?",
+              "text": "Name the owner before leaving the slide."
+            }
+          ]
+        },
+        "footer": ""
+      },
+      "notes": {
+        "do": "Ask the audience which question is usually missing.",
+        "say": "These questions make a review useful. Most teams are good at explaining what changed. Fewer make the choice explicit, and ownership often arrives in a follow-up message."
+      }
+    },
+    {
+      "id": "start-next-review",
+      "type": "close",
+      "label": "Close",
+      "act": "Act",
+      "timing": "3m",
+      "energy": "calm",
+      "content": {
+        "eyebrow": "NEXT REVIEW",
+        "heading": "Put the decision in the slide title",
+        "lead": "Test the model in one real meeting this week.",
+        "component": "action-list",
+        "data": {
+          "items": [
+            "Rewrite one status title as a decision question.",
+            "Name the owner before the meeting ends.",
+            "Record the choice and date in the same place."
+          ]
+        },
+        "footer": "Start with one meeting"
+      },
+      "notes": {
+        "do": "End on the first action.",
+        "say": "Try this in one real review. Rewrite a status title as the decision the room must make. If that changes the conversation, keep the model."
+      }
+    }
+  ]
+}
+

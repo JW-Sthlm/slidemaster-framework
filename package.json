@@ -1,0 +1,16 @@
+{
+  "name": "slidemaster-framework",
+  "version": "1.0.0",
+  "description": "Portable HTML presentation framework with a JSON deck specification and validation.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate.mjs examples/deck-spec.example.json",
+    "test": "node tests/smoke.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
+

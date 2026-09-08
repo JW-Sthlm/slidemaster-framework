@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jw-sthlm.github.io/slidemaster-framework/schema/deck-spec.schema.json",
+  "title": "Slidemaster Deck Specification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["meta", "slides"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "subtitle", "author", "date", "language", "theme", "durationMinutes"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "subtitle": { "type": "string" },
+        "author": { "type": "string", "minLength": 1 },
+        "date": { "type": "string", "format": "date" },
+        "language": { "type": "string", "minLength": 2 },
+        "theme": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "durationMinutes": { "type": "integer", "minimum": 1 },
+        "audience": { "type": "string" },
+        "centralClaim": { "type": "string" }
+      }
+    },
+    "slides": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/slide" }
+    }
+  },
+  "$defs": {
+    "notes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["say"],
+      "properties": {
+        "say": { "type": "string", "minLength": 1 },
+        "do": { "type": "string" }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading", "component", "data"],
+      "properties": {
+        "eyebrow": { "type": "string" },
+        "heading": { "type": "string", "minLength": 1 },
+        "lead": { "type": "string" },
+        "component": {
+          "enum": ["statement", "stat-grid", "card-grid", "process", "quote", "action-list"]
+        },
+        "data": { "type": "object" },
+        "footer": { "type": "string" }
+      }
+    },
+    "slide": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "label", "act", "timing", "content", "notes"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "type": {
+          "enum": ["hero", "standard", "contrast", "close"]
+        },
+        "label": { "type": "string", "minLength": 1 },
+        "act": { "type": "string", "minLength": 1 },
+        "timing": {
+          "type": "string",
+          "pattern": "^(?:[1-9][0-9]*m)?(?:[1-9][0-9]*s)?$"
+        },
+        "energy": {
+          "enum": ["calm", "steady", "high"]
+        },
+        "content": { "$ref": "#/$defs/content" },
+        "notes": { "$ref": "#/$defs/notes" }
+      }
+    }
+  }
+}
+

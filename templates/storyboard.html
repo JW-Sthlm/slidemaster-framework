@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slidemaster Storyboard</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --bg: #f1f3f2;
+      --surface: #ffffff;
+      --text: #1d2528;
+      --muted: #667277;
+      --accent: #24756f;
+      --border: #d8dedc;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", system-ui, sans-serif; }
+    header { padding: 2rem clamp(1rem, 5vw, 4rem); background: var(--accent); color: white; }
+    header h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 3rem); }
+    header p { margin: 0.5rem 0 0; opacity: 0.82; }
+    main { width: min(92rem, 100%); margin: auto; padding: 2rem clamp(1rem, 4vw, 3rem) 5rem; }
+    .summary { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2rem; }
+    .summary span { padding: 0.45rem 0.75rem; border-radius: 999px; background: var(--surface); color: var(--muted); }
+    .act { margin: 2rem 0 0.8rem; color: var(--accent); font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .slide-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .preview { min-height: 20rem; padding: 2rem; background: #f8f6f1; }
+    .preview .number { font-family: ui-monospace, monospace; color: var(--muted); }
+    .preview .eyebrow { margin-top: 2rem; color: var(--accent); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; }
+    .preview h2 { margin: 0.5rem 0; max-width: 16ch; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; text-wrap: balance; }
+    .preview p { max-width: 42rem; color: var(--muted); line-height: 1.5; }
+    .component-summary { margin-top: 2rem; padding: 1rem; border-left: 0.3rem solid var(--accent); background: white; }
+    .notes { padding: 2rem; border-left: 1px solid var(--border); }
+    .meta { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .meta span { padding: 0.3rem 0.55rem; border-radius: 0.35rem; background: var(--bg); color: var(--muted); font-size: 0.8rem; }
+    .notes h3 { margin: 1.4rem 0 0.4rem; color: var(--accent); font-size: 0.8rem; letter-spacing: 0.08em; }
+    .notes p { margin: 0; line-height: 1.65; }
+    @media (max-width: 800px) {
+      .slide-row { grid-template-columns: 1fr; }
+      .notes { border-top: 1px solid var(--border); border-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="title">Storyboard</h1>
+    <p id="subtitle"></p>
+  </header>
+  <main>
+    <div class="summary" id="summary"></div>
+    <div id="storyboard"></div>
+  </main>
+
+  <script type="application/json" id="deck-spec">
+  {
+    "meta": {
+      "title": "A portable presentation shell",
+      "subtitle": "Practice view",
+      "author": "Presentation Author",
+      "date": "2026-01-15",
+      "language": "en",
+      "theme": "clean",
+      "durationMinutes": 6
+    },
+    "slides": [
+      {
+        "id": "opening",
+        "type": "hero",
+        "label": "Opening",
+        "act": "Frame",
+        "timing": "2m",
+        "energy": "calm",
+        "content": {
+          "eyebrow": "SLIDEMASTER FRAMEWORK",
+          "heading": "Start with the story",
+          "lead": "The JSON holds the content. The shell handles the presentation.",
+          "component": "statement",
+          "data": { "text": "One source of truth." },
+          "footer": ""
+        },
+        "notes": {
+          "do": "Pause before advancing.",
+          "say": "This shell turns a structured deck specification into a browser presentation."
+        }
+      },
+      {
+        "id": "building-blocks",
+        "type": "standard",
+        "label": "Blocks",
+        "act": "Explain",
+        "timing": "2m",
+        "energy": "steady",
+        "content": {
+          "eyebrow": "COMPONENTS",
+          "heading": "Use a small visual vocabulary",
+          "lead": "Choose the component that supports the idea.",
+          "component": "card-grid",
+          "data": {
+            "items": [
+              { "title": "Evidence", "text": "Use stats when the number is the point." },
+              { "title": "Options", "text": "Use cards when the audience must compare." },
+              { "title": "Sequence", "text": "Use a process when order matters." }
+            ]
+          },
+          "footer": ""
+        },
+        "notes": {
+          "do": "",
+          "say": "A limited component set keeps the deck coherent and easier to review."
+        }
+      },
+      {
+        "id": "next-step",
+        "type": "close",
+        "label": "Close",
+        "act": "Act",
+        "timing": "2m",
+        "energy": "calm",
+        "content": {
+          "eyebrow": "YOUR DECK",
+          "heading": "Validate, open, present",
+          "lead": "Use the example specification as your starting point.",
+          "component": "action-list",
+          "data": {
+            "items": [
+              "Write the central claim.",
+              "Create and validate the specification.",
+              "Review every slide at presentation size."
+            ]
+          },
+          "footer": "Press the arrow keys to navigate"
+        },
+        "notes": {
+          "do": "End on the first action.",
+          "say": "Start with the claim. The format and theme should support it."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script>
+    (() => {
+      const spec = JSON.parse(document.getElementById("deck-spec").textContent);
+      const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      })[character]);
+      const describe = content => {
+        const data = content.data;
+        if (content.component === "statement") return data.text;
+        if (content.component === "stat-grid") return data.items.map(item => `${item.value}: ${item.label}`).join(" | ");
+        if (content.component === "card-grid") return data.items.map(item => item.title).join(" | ");
+        if (content.component === "process") return data.steps.join(" to ");
+        if (content.component === "quote") return data.text;
+        if (content.component === "action-list") return data.items.join(" | ");
+        return content.component;
+      };
+
+      document.title = `Storyboard: ${spec.meta.title}`;
+      document.documentElement.lang = spec.meta.language || "en";
+      document.getElementById("title").textContent = spec.meta.title;
+      document.getElementById("subtitle").textContent = spec.meta.subtitle;
+
+      const acts = [...new Set(spec.slides.map(slide => slide.act))];
+      document.getElementById("summary").innerHTML = [
+        `${spec.slides.length} slides`,
+        `${acts.length} acts`,
+        `${spec.meta.durationMinutes} minutes`,
+        spec.meta.author
+      ].map(item => `<span>${escapeHtml(item)}</span>`).join("");
+
+      let activeAct = "";
+      document.getElementById("storyboard").innerHTML = spec.slides.map((slide, index) => {
+        const actHeading = slide.act !== activeAct ? `<h2 class="act">${escapeHtml(slide.act)}</h2>` : "";
+        activeAct = slide.act;
+        return `${actHeading}
+          <article class="slide-row" id="${escapeHtml(slide.id)}">
+            <section class="preview">
+              <div class="number">${String(index + 1).padStart(2, "0")} / ${String(spec.slides.length).padStart(2, "0")}</div>
+              ${slide.content.eyebrow ? `<div class="eyebrow">${escapeHtml(slide.content.eyebrow)}</div>` : ""}
+              <h2>${escapeHtml(slide.content.heading)}</h2>
+              ${slide.content.lead ? `<p>${escapeHtml(slide.content.lead)}</p>` : ""}
+              <div class="component-summary">${escapeHtml(describe(slide.content))}</div>
+            </section>
+            <section class="notes">
+              <div class="meta">
+                <span>${escapeHtml(slide.timing)}</span>
+                <span>${escapeHtml(slide.energy || "steady")}</span>
+                <span>${escapeHtml(slide.label)}</span>
+              </div>
+              ${slide.notes.do ? `<h3>DO</h3><p>${escapeHtml(slide.notes.do)}</p>` : ""}
+              <h3>SAY</h3>
+              <p>${escapeHtml(slide.notes.say)}</p>
+            </section>
+          </article>`;
+      }).join("");
+    })();
+  </script>
+</body>
+</html>
