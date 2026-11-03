@@ -37,6 +37,7 @@ try {
 const viewports = [{ width: 1920, height: 1080 }, { width: 390, height: 844 }];
 const outRoot = process.env.RENDER_OUT_DIR ? resolve(process.env.RENDER_OUT_DIR) : await mkdtemp(join(tmpdir(), "slidemaster-render-"));
 const example = JSON.parse(await readFile(join(root, "examples/deck-spec.example.json"), "utf8"));
+const intro = JSON.parse(await readFile(join(root, "examples/framework-introduction.json"), "utf8"));
 const results = { passed: 0, failed: [] };
 
 async function check(name, fn) {
@@ -412,6 +413,47 @@ try {
   const matrixUrls = await writeShells("matrix", await buildShells(matrix));
   await check("every component on every slide type: no overflow and WCAG AA contrast", () => checkEverySlide(matrixUrls.deck, "component matrix"));
 
+  const processCounts = [3, 5, 8];
+  const processSpec = {
+    meta: { ...example.meta, durationMinutes: processCounts.length },
+    slides: processCounts.map(count => ({
+      id: `process-${count}`,
+      type: "standard",
+      label: `${count} steps`,
+      act: "Process",
+      timing: "1m",
+      content: { heading: `${count} steps`, component: "process", data: { steps: Array.from({ length: count }, (_, step) => `Step ${step + 1}`) } },
+      notes: { say: "Process probe." }
+    }))
+  };
+  delete processSpec.meta.chapters;
+  const processUrls = await writeShells("process", await buildShells(processSpec));
+  await check("process steps fill balanced rows, and an odd last step spans the row on phones", async () => {
+    const expected = { 1920: [[3], [3, 2], [4, 4]], 390: [[2, 1], [2, 2, 1], [2, 2, 2, 2]] };
+    for (const viewport of viewports) {
+      const { context, page } = await open(processUrls.deck, { viewport });
+      const layouts = [];
+      for (let index = 0; index < processCounts.length; index += 1) {
+        if (index > 0) {
+          await page.keyboard.press("ArrowRight");
+          await settle(page);
+        }
+        layouts.push(await page.evaluate(() => {
+          const process = document.querySelector(".slide.is-active .process");
+          const steps = [...process.querySelectorAll(".process-step")].map(step => step.getBoundingClientRect());
+          const tops = [...new Set(steps.map(rect => Math.round(rect.top)))].sort((a, b) => a - b);
+          return {
+            rows: tops.map(top => steps.filter(rect => Math.round(rect.top) === top).length),
+            lastSpans: Math.abs(steps.at(-1).width - process.getBoundingClientRect().width) < 2
+          };
+        }));
+      }
+      await dispose(context);
+      assert.deepEqual(layouts.map(layout => layout.rows), expected[viewport.width], `rows at ${viewport.width}px`);
+      if (viewport.width === 390) assert.ok(layouts[0].lastSpans && layouts[1].lastSpans, "an odd last step does not span the row on phones");
+    }
+  });
+
   const injection = structuredClone(example);
   injection.meta.title = "<img src=x onerror=alert('title')>";
   injection.slides[0].label = "\" onmouseover=\"alert('label')";
@@ -523,7 +565,7 @@ try {
       }
     }
   });
-  await check("docs storyboard renders cleanly", () => checkStoryboard(docs.storyboard, "docs storyboard", example.slides.length));
+  await check("docs storyboard renders cleanly", () => checkStoryboard(docs.storyboard, "docs storyboard", intro.slides.length));
 
   await check("rehearse mode at both sizes: no overflow, AA contrast, badge clear of the controls and links", async () => {
     for (const viewport of viewports) {

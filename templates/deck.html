@@ -112,6 +112,9 @@
       gap: 0.75rem;
       counter-reset: step;
     }
+    .process.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .process.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .process.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .process-step {
       counter-increment: step;
       padding: 1.2rem;
@@ -139,6 +142,7 @@
     .contrast .quote { border-left-color: var(--color-inverse); }
     .quote cite { display: block; margin-top: 1rem; font-family: var(--font-body); font-size: 1rem; }
     .action-list { display: grid; gap: 0.8rem; max-width: 50rem; margin-inline: auto; text-align: left; }
+    .standard .action-list, .contrast .action-list { margin-inline: 0; }
     .action-item {
       padding: 1rem 1.2rem;
       border-radius: var(--radius-medium);
@@ -275,6 +279,11 @@
       .stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 0.6rem; }
       .stat, .card { padding: 0.85rem 0.9rem; }
       .stat-value { font-size: clamp(1.75rem, 8vw, 2.5rem); }
+      .process.cols-3, .process.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .process { gap: 0.6rem; }
+      .process-step { padding: 0.85rem 0.9rem; }
+      .process-step::before { margin-bottom: 0.6rem; }
+      .process-step:last-child:nth-child(odd) { grid-column: 1 / -1; }
       .footer { margin-top: 1.25rem; }
       .controls { left: 50%; right: auto; transform: translateX(-50%); }
       .shell-title { display: none; }
@@ -432,7 +441,9 @@
         }
         if (component === "process") {
           const steps = list(data.steps).filter(hasText);
-          return steps.length ? `<div class="process">${steps.map(step =>
+          // Balanced rows: up to four steps share one row, five to eight split over two, longer lists use rows of four.
+          const columns = steps.length <= 4 ? steps.length : steps.length <= 8 ? Math.ceil(steps.length / 2) : 4;
+          return steps.length ? `<div class="process cols-${columns}">${steps.map(step =>
             `<div class="process-step">${escapeHtml(step)}</div>`
           ).join("")}</div>` : missing();
         }

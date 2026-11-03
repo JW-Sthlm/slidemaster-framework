@@ -6,13 +6,14 @@ You write the talk as a JSON deck specification. A validator checks it against t
 
 The repository remains generic, with no product branding, private content, personal writing profile, or environment-specific paths.
 
-Live demo: https://jw-sthlm.github.io/slidemaster-framework/ (built from `examples/deck-spec.example.json`).
+Live demo: https://jw-sthlm.github.io/slidemaster-framework/ is a 15-minute introduction to the framework and its eight stages, built from `examples/framework-introduction.json`. Open its storyboard for the full script, timing, and sources.
 
 ## What is included
 
 - `SKILL.md`: portable workflow instructions for AI assistants that can work with files, a browser, and commands
 - `schema/deck-spec.schema.json`: JSON Schema (draft 2020-12) for the deck specification
-- `examples/deck-spec.example.json`: a complete generic example
+- `examples/deck-spec.example.json`: a complete generic example and the best starting point for your own deck
+- `examples/framework-introduction.json`: the live demo, a talk about the framework itself
 - `templates/deck.html`: the interactive presentation shell
 - `templates/storyboard.html`: the planning and rehearsal view
 - `themes/clean.css`: a starter theme that implements the theme contract
@@ -75,7 +76,7 @@ The schema is the reference. In short:
 - Optional `meta` fields are `audience`, `centralClaim`, `audienceAction` (what the audience should do after the talk), `version` (for example "outline v0.3"), and `chapters`.
 - Each chapter has an `id`, a `label`, an optional `budgetMinutes`, and the IDs of its `slides`. When every chapter has a budget, the budgets must add up to `durationMinutes`.
 - Each slide has an `id`, a `type` (`hero`, `standard`, `contrast`, or `close`), a `label`, an `act`, a `timing` such as `2m`, `45s`, or `1m30s`, `content`, and `notes` with `say` and an optional `do`. `energy` and `sources` (each with a `label` and an optional http or https `url`) are optional.
-- `content.component` is one of `statement`, `stat-grid`, `card-grid`, `process`, `quote`, or `action-list`, and the schema defines the `data` for each component.
+- `content.component` is one of `statement`, `stat-grid`, `card-grid`, `process`, `quote`, or `action-list`, and the schema defines the `data` for each component. A `process` keeps its steps in balanced rows: up to four in one row, five to eight in two. On phones it uses two columns.
 
 The storyboard shows each slide's timing, the cumulative time, chapter totals against their budgets, and the sources under the notes. Notes and sources never appear in the deck.
 
@@ -108,7 +109,7 @@ Without `?rehearse`, the deck shows no badge and records nothing. Rehearsal mode
 ## Validation and tests
 
 ```bash
-npm run validate      # validates examples/deck-spec.example.json
+npm run validate      # validates both specifications in examples/
 npm test              # smoke tests, no browser needed
 npm run test:render   # browser tests, needs Playwright
 ```
@@ -118,9 +119,9 @@ npm run test:render   # browser tests, needs Playwright
 - Errors: duplicate slide IDs, chapters that list missing slides, a slide in two chapters, chapter budgets that do not add up to `durationMinutes`, and text that contains `</script`, `<!--`, an em dash, a user-specific Windows path, or a local file URL.
 - Warnings: slide timings more than 10 percent away from `durationMinutes`, a chapter more than 10 percent over its budget, headings longer than 90 characters or 12 words, more than 45 body words on a slide, an opening that reads like background, and a final slide without an audience action.
 
-`npm test` runs `tests/smoke.mjs`, which checks the package structure and validates the example and the specifications embedded in `templates/` and `docs/`. It also confirms that `docs/` matches a fresh build, runs the validator probes in `tests/validator-cases.mjs`, the build unit tests and the rehearsal report tests, and scans every file for em dashes, user-specific paths, and local file URLs. No browser is involved.
+`npm test` runs `tests/smoke.mjs`, which checks the package structure, validates both specifications in `examples/` (the live demo must have no warnings), and validates the specifications embedded in `templates/` and `docs/`. It also confirms that `docs/` matches a fresh build, runs the validator probes in `tests/validator-cases.mjs`, the build unit tests and the rehearsal report tests, and scans every file for em dashes, user-specific paths, and local file URLs. No browser is involved.
 
-`npm run test:render` runs `tests/render.mjs` in headless Chromium at 1920x1080 and 390x844. It builds the example, a deck with every component on every slide type, injection specifications, and broken specifications, and checks the pages in `docs/` as well. Any of these fails the run: console or page errors, requests that leave the page, slide overflow, text below WCAG AA contrast, broken keyboard or hash navigation, or a dialog opened by specification text. It also checks that rehearsal mode records and saves a run, keeps its badge readable and clear of the controls, and stays off without `?rehearse`. At the end it prints the tightest vertical slack per deck and viewport, so you can see how close a slide comes to overflowing on another system's fonts. Playwright is loaded from `PLAYWRIGHT_MODULE` or the `playwright` package. Without Playwright the test prints a notice and exits, unless `CI=true`, where it fails.
+`npm run test:render` runs `tests/render.mjs` in headless Chromium at 1920x1080 and 390x844. It builds the example, a deck with every component on every slide type, process lists of different lengths, injection specifications, and broken specifications, and checks the pages in `docs/` as well. Any of these fails the run: console or page errors, requests that leave the page, slide overflow, text below WCAG AA contrast, broken keyboard or hash navigation, or a dialog opened by specification text. It also checks that rehearsal mode records and saves a run, keeps its badge readable and clear of the controls, and stays off without `?rehearse`. At the end it prints the tightest vertical slack per deck and viewport, so you can see how close a slide comes to overflowing on another system's fonts. Playwright is loaded from `PLAYWRIGHT_MODULE` or the `playwright` package. Without Playwright the test prints a notice and exits, unless `CI=true`, where it fails.
 
 To run the render tests locally:
 
@@ -142,7 +143,7 @@ To add a theme, follow `themes/theme-contract.md`.
 
 ## Publishing the demo
 
-`docs/` is build output. After you change the example, a template, the theme, or the schema, run:
+`docs/` is build output, made from `examples/framework-introduction.json`. After you change that specification, a template, the theme, or the schema, run:
 
 ```bash
 npm run build:docs

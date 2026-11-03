@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.1 - 2026-11-03
+
+### Added
+
+- `examples/framework-introduction.json`: a 15-minute talk about the framework itself, covering why it exists, how it works, the eight stages, and how to start, with speaker notes and sources. The live demo in `docs/` is now built from it. `npm run validate` and the smoke test check it, and the smoke test requires zero warnings.
+
+### Changed
+
+- Process steps fill balanced rows. Up to four steps share one row, five to eight split over two rows, and longer lists use rows of four. On phones the steps use two columns with tighter spacing, and an odd last step spans the row.
+- Action lists on left-aligned slides (`standard` and `contrast`) align left instead of sitting centered.
+
 ## 1.2.0 - 2026-11-03
 
 ### Added

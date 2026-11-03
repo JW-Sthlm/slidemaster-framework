@@ -20,7 +20,7 @@ export const DOCS_HEADERS = {
 
 // Everything GitHub Pages serves from docs/, keyed by path relative to docs/.
 export async function buildDocsOutputs() {
-  const spec = await readSpec(join(ROOT, "examples", "deck-spec.example.json"));
+  const spec = await readSpec(join(ROOT, "examples", "framework-introduction.json"));
   const shells = await buildShells(spec, { headers: DOCS_HEADERS });
   const schema = (await readFile(join(ROOT, "schema", "deck-spec.schema.json"), "utf8")).replace(/\r\n?/g, "\n");
   return {

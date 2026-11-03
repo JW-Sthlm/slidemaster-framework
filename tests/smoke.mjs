@@ -24,6 +24,7 @@ const requiredFiles = [
   "stages/rehearsal-log.md",
   "schema/deck-spec.schema.json",
   "examples/deck-spec.example.json",
+  "examples/framework-introduction.json",
   "templates/deck.html",
   "templates/storyboard.html",
   "themes/theme-contract.md",
@@ -66,6 +67,11 @@ for (const file of requiredFiles) {
 await check("example specification validates", async () => {
   const result = await validateFile(join(root, "examples/deck-spec.example.json"));
   assert.deepEqual(result.errors, []);
+});
+await check("framework introduction for the live demo validates without warnings", async () => {
+  const result = await validateFile(join(root, "examples/framework-introduction.json"));
+  assert.deepEqual(result.errors, []);
+  assert.deepEqual(result.warnings, []);
 });
 await check("validateFile reads a BOM and checks the raw text for duplicate keys", async () => {
   const dir = await mkdtemp(join(tmpdir(), "slidemaster-"));

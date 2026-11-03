@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Storyboard: From scattered updates to clear decisions</title>
+  <title>Storyboard: Slidemaster Framework</title>
   <link rel="icon" href="data:,">
   <style data-theme-source="themes/clean.css">
 :root,
@@ -129,202 +129,541 @@
   <script type="application/json" id="deck-spec">
 {
   "meta": {
-    "title": "From scattered updates to clear decisions",
-    "subtitle": "A practical operating model for project reviews",
-    "author": "Alex Morgan",
-    "date": "2026-01-15",
+    "title": "Slidemaster Framework",
+    "subtitle": "From a raw idea to a rehearsed talk",
+    "author": "Johan Wallquist",
+    "date": "2026-11-03",
     "language": "en",
     "theme": "clean",
-    "durationMinutes": 12,
-    "version": "example v1.1",
-    "audience": "Team leads and project owners",
-    "centralClaim": "A project review should produce a decision, not another status summary.",
-    "audienceAction": "Rewrite one status title as a decision question before your next review.",
+    "durationMinutes": 15,
+    "version": "framework 1.2.1",
+    "audience": "Presenters who prepare talks and workshops with an AI assistant",
+    "centralClaim": "A talk gets better when the thinking happens before the slides, and an AI assistant can run that process with you.",
+    "audienceAction": "Write the one thought your next talk should test, then let your assistant take it through the eight stages.",
     "chapters": [
       {
-        "id": "frame",
-        "label": "Frame the problem",
-        "budgetMinutes": 3,
+        "id": "why",
+        "label": "Why it exists",
+        "budgetMinutes": 4,
         "slides": [
-          "opening",
-          "cost-of-ambiguity"
+          "easy-part",
+          "wrong-place",
+          "origin"
         ]
       },
       {
-        "id": "model",
-        "label": "Show the model",
-        "budgetMinutes": 6,
+        "id": "how",
+        "label": "How it works",
+        "budgetMinutes": 3,
         "slides": [
-          "decision-loop",
-          "review-format"
+          "write-first",
+          "what-you-get",
+          "who-for"
         ]
       },
       {
-        "id": "act",
-        "label": "Ask for action",
+        "id": "stages",
+        "label": "The eight stages",
+        "budgetMinutes": 5,
+        "slides": [
+          "eight-stages",
+          "find-the-thought",
+          "shape-the-talk",
+          "where-rounds-go",
+          "your-words"
+        ]
+      },
+      {
+        "id": "start",
+        "label": "Get started",
         "budgetMinutes": 3,
         "slides": [
-          "start-next-review"
+          "first-deck",
+          "rehearse",
+          "your-assistant",
+          "next-talk"
         ]
       }
     ]
   },
   "slides": [
     {
-      "id": "opening",
+      "id": "easy-part",
       "type": "hero",
-      "label": "Opening",
-      "act": "Frame",
+      "label": "The easy part",
+      "act": "Why it exists",
       "timing": "1m",
-      "energy": "calm",
+      "energy": "high",
       "content": {
-        "eyebrow": "PROJECT REVIEWS",
-        "heading": "The meeting ended. What changed?",
-        "lead": "If nobody can name the decision, the review was only a report.",
+        "eyebrow": "Slidemaster Framework",
+        "heading": "The slides are the easy part",
+        "lead": "Slidemaster takes a talk from a raw idea to a rehearsed presentation. An AI assistant does the legwork. You keep the words.",
         "component": "statement",
         "data": {
-          "text": "Make the decision visible."
-        },
-        "footer": ""
+          "text": "Start with the thought."
+        }
       },
       "notes": {
-        "do": "Pause after the question.",
-        "say": "Think about your last project review. You heard updates, saw several charts, and probably discussed risks. But what decision did the meeting produce?"
+        "do": "Let the title sit. Pause before you speak.",
+        "say": "Ask any assistant for a deck and you have one in a minute. Headings and bullets, maybe an icon, and it already looks finished. But that's the easy part. You still have to decide what you want to test and whether the proof holds up, then fit the talk into the minutes you've got and practice it. That's the work I built this framework for, starting with my own keynotes. In the next fifteen minutes I'll show you how it works, so you can try it on your next talk."
       }
     },
     {
-      "id": "cost-of-ambiguity",
+      "id": "wrong-place",
       "type": "standard",
-      "label": "Cost",
-      "act": "Frame",
-      "timing": "2m",
+      "label": "The wrong place",
+      "act": "Why it exists",
+      "timing": "1m30s",
       "energy": "steady",
       "content": {
-        "eyebrow": "THE COST",
-        "heading": "Ambiguity creates work after the meeting",
-        "lead": "People leave with different interpretations, so the team pays twice.",
+        "heading": "Most decks start in the wrong place",
+        "lead": "Open a slide tool, or ask an assistant for slides.",
+        "component": "statement",
+        "data": {
+          "text": "You get a layout before you have a point."
+        }
+      },
+      "notes": {
+        "do": "Ask who opened a deck before they knew their point. Wait for hands.",
+        "say": "Someone books you for a talk, and the same afternoon you're filling in a deck. Title slide and agenda, then the boxes. We've all done it. With an assistant the boxes fill themselves, before you've decided what you actually want to say. Generic claims. No sources, and nobody pushing back. But there's a deck to work on, so you keep going. Nobody adds up the minutes until the first run-through, usually the night before. The layout was never the problem. The order was."
+      }
+    },
+    {
+      "id": "origin",
+      "type": "contrast",
+      "label": "Origin",
+      "act": "Why it exists",
+      "timing": "1m30s",
+      "energy": "calm",
+      "content": {
+        "heading": "It started with my own keynotes",
+        "component": "statement",
+        "data": {
+          "text": "The method worked. But every new talk began by copying the last one."
+        }
+      },
+      "notes": {
+        "do": "Slow down. Tell it as a story.",
+        "say": "This autumn I prepared two keynotes with an AI assistant. Both started with me talking the idea through, unedited, and the assistant pulling out the claims, so we could research each one and find its strongest counterargument. Before any slides, I went through my old decks for things to reuse and worked out the minutes. Then came the outline. We rewrote it over and over, and both talks got better for every round. It worked. But the next talk always began with copying the scripts from the previous one, and the rules drifted a little each time. A fix stayed in the talk where I made it. So I put the method in one place. You're looking at it."
+      }
+    },
+    {
+      "id": "write-first",
+      "type": "standard",
+      "label": "Write first",
+      "act": "How it works",
+      "timing": "1m",
+      "energy": "high",
+      "content": {
+        "heading": "Write the talk first",
+        "lead": "Your talk goes into one JSON spec. The deck and the storyboard are built from it.",
         "component": "stat-grid",
         "data": {
           "items": [
             {
-              "value": "3",
-              "label": "versions of the next step"
+              "value": "1",
+              "label": "JSON spec you edit"
             },
             {
-              "value": "2x",
-              "label": "the coordination effort"
+              "value": "2",
+              "label": "HTML files out"
             },
             {
               "value": "0",
-              "label": "decisions recorded"
+              "label": "runtime dependencies"
             }
           ]
         },
-        "footer": "Illustrative example"
+        "footer": "This deck is built from examples/framework-introduction.json."
       },
       "notes": {
-        "do": "Point to the zero last.",
-        "say": "The numbers are illustrative, but the pattern is common. A vague review creates follow-up messages, side meetings, and rework. The important number is zero: no decision recorded."
+        "do": "Point at the footer.",
+        "say": "Write the talk first. Every slide goes into one JSON file, along with its timing and the words you'll say. The sources behind the facts go in there too. The validator checks that spec before the build turns it into two HTML files: the deck and a storyboard for practice. You can mail them or open them on a plane. No server, nothing to install. When something needs changing, edit the spec and build again. You never edit the slides by hand, so they can't drift from the spec. This deck came from a file in the repository. Exactly that way."
       },
       "sources": [
         {
-          "label": "Illustrative figures created for this example deck"
+          "label": "README: build and validation",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework#readme"
+        },
+        {
+          "label": "package.json: no runtime dependencies",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/package.json"
         }
       ]
     },
     {
-      "id": "decision-loop",
-      "type": "contrast",
-      "label": "Model",
-      "act": "Model",
-      "timing": "3m",
-      "energy": "high",
-      "content": {
-        "eyebrow": "A SIMPLE LOOP",
-        "heading": "Evidence should lead to a named decision",
-        "lead": "Use the same sequence for every review.",
-        "component": "process",
-        "data": {
-          "steps": [
-            "Signal",
-            "Choice",
-            "Owner",
-            "Date"
-          ]
-        },
-        "footer": ""
-      },
-      "notes": {
-        "do": "Move from left to right.",
-        "say": "Start with the signal that matters. Put the real choice on the screen. Name one owner, then set a date. Four steps are enough for most project reviews."
-      }
-    },
-    {
-      "id": "review-format",
+      "id": "what-you-get",
       "type": "standard",
-      "label": "Format",
-      "act": "Model",
-      "timing": "3m",
+      "label": "What you get",
+      "act": "How it works",
+      "timing": "1m",
       "energy": "steady",
       "content": {
-        "eyebrow": "THE FORMAT",
-        "heading": "Design each slide around the decision",
-        "lead": "The slide becomes a working surface for the room.",
+        "heading": "What you get",
         "component": "card-grid",
         "data": {
           "items": [
             {
-              "title": "What changed?",
-              "text": "Show the new signal, not a full history."
+              "title": "Validator",
+              "text": "Catches broken timing before you build"
             },
             {
-              "title": "What is the choice?",
-              "text": "Write the options in plain language."
+              "title": "Deck",
+              "text": "Keyboard control and a rehearse mode"
             },
             {
-              "title": "Who acts next?",
-              "text": "Name the owner before leaving the slide."
+              "title": "Storyboard",
+              "text": "Script and a running clock"
+            },
+            {
+              "title": "Stage templates",
+              "text": "One file for every stage"
             }
           ]
-        },
-        "footer": ""
+        }
       },
       "notes": {
-        "do": "Ask the audience which question is usually missing.",
-        "say": "These questions make a review useful. Most teams are good at explaining what changed. Fewer make the choice explicit, and ownership often arrives in a follow-up message."
+        "do": "Walk the cards left to right.",
+        "say": "There are four parts, and the validator comes first. It checks the spec before you build, and stops you if there are duplicate slides or the timings don't add up. An em dash or a local file path will stop it too. (Yes, the em dash. I have opinions.) The deck runs in any browser and works from the keyboard. There's a rehearse mode I'll show you. Then you've got the storyboard, with every slide and the full script alongside a running clock for practice. The stage templates are where you do the thinking: a file for each stage, before you make slides."
       },
       "sources": [
         {
-          "label": "Example review template (placeholder link)",
-          "url": "https://example.com/project-review-template"
+          "label": "README: what is included",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework#what-is-included"
         }
       ]
     },
     {
-      "id": "start-next-review",
-      "type": "close",
-      "label": "Close",
-      "act": "Act",
-      "timing": "3m",
+      "id": "who-for",
+      "type": "standard",
+      "label": "Who it is for",
+      "act": "How it works",
+      "timing": "1m",
       "energy": "calm",
       "content": {
-        "eyebrow": "NEXT REVIEW",
-        "heading": "Put the decision in the slide title",
-        "lead": "Test the model in one real meeting this week.",
+        "heading": "Who it is for",
+        "component": "card-grid",
+        "data": {
+          "items": [
+            {
+              "title": "Use it when",
+              "text": "The talk matters and you want the thinking done before the slides."
+            },
+            {
+              "title": "Skip it when",
+              "text": "A one-page update would do. Write the page."
+            }
+          ]
+        }
+      },
+      "notes": {
+        "do": "Be honest. Name when to skip it.",
+        "say": "If you give talks, this is for you. Keynotes and workshops, customer sessions, that all-hands where you've got twelve minutes and far too much to say. When the talk matters, the preparation pays back. But please don't do all this for a weekly status update. You don't need a voice prompt and a counterargument to tell people what happened this week. Write a page and send it. I mean that. And if the talk is tomorrow and you've only got one evening, go straight to the outline and rehearsal, because those two stages will help you most."
+      }
+    },
+    {
+      "id": "eight-stages",
+      "type": "standard",
+      "label": "Eight stages",
+      "act": "The eight stages",
+      "timing": "1m",
+      "energy": "high",
+      "content": {
+        "heading": "Eight stages",
+        "lead": "From idea to rehearsal. Outline and Deck are loops.",
+        "component": "process",
+        "data": {
+          "steps": [
+            "Idea",
+            "Voice prompt",
+            "Research",
+            "Context",
+            "Planning",
+            "Outline",
+            "Deck",
+            "Rehearsal"
+          ]
+        }
+      },
+      "notes": {
+        "do": "Trace the top row, then the bottom row. Stop on Outline and Deck.",
+        "say": "Eight stages. The first four help you find the thought. You start with the idea and a voice prompt, then do the research and look at your context. After that you work on the talk itself: you plan the minutes, write the outline, build the deck and rehearse it. Each stage leaves a file behind, with a gate that tells you when you've done enough to move on. But Outline and Deck are loops. You'll go through them many times, and most of your rounds happen there. That's fine. The rounds are the work."
+      },
+      "sources": [
+        {
+          "label": "SKILL.md: the eight stages",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md"
+        }
+      ]
+    },
+    {
+      "id": "find-the-thought",
+      "type": "standard",
+      "label": "Find the thought",
+      "act": "The eight stages",
+      "timing": "1m",
+      "energy": "steady",
+      "content": {
+        "heading": "First, find the thought",
+        "component": "card-grid",
+        "data": {
+          "items": [
+            {
+              "title": "Idea",
+              "text": "A thought worth testing, in your words"
+            },
+            {
+              "title": "Voice prompt",
+              "text": "Talk it through. Save it unedited."
+            },
+            {
+              "title": "Research",
+              "text": "Facts and the strongest pushback"
+            },
+            {
+              "title": "Context",
+              "text": "Your old decks and notes, reused"
+            }
+          ]
+        }
+      },
+      "notes": {
+        "do": "Spend the time on the voice prompt.",
+        "say": "Start with one sentence you believe and want to test. Then talk for five or ten minutes, out loud, without editing yourself. I just dictate in Copilot CLI. The assistant keeps the transcript word for word and pulls out the claims and numbers to check, but it doesn't get to improve what I said. That part matters. For every claim, the research needs the facts and the strongest counterargument you can find. Then look at your own old decks and notes for context. You've probably said half of this before. Maybe better than you remember."
+      },
+      "sources": [
+        {
+          "label": "SKILL.md: stages 1 to 4",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md"
+        },
+        {
+          "label": "Stage templates",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework/tree/main/stages"
+        }
+      ]
+    },
+    {
+      "id": "shape-the-talk",
+      "type": "standard",
+      "label": "Shape the talk",
+      "act": "The eight stages",
+      "timing": "1m",
+      "energy": "steady",
+      "content": {
+        "heading": "Then shape the talk",
+        "component": "card-grid",
+        "data": {
+          "items": [
+            {
+              "title": "Planning",
+              "text": "Audience, goal and minutes that add up"
+            },
+            {
+              "title": "Outline",
+              "text": "The full script, round after round"
+            },
+            {
+              "title": "Deck",
+              "text": "Built from the spec, slide by slide"
+            },
+            {
+              "title": "Rehearsal",
+              "text": "Against the clock, until it sticks"
+            }
+          ]
+        }
+      },
+      "notes": {
+        "do": "Land on Rehearsal.",
+        "say": "Who's in the room, what should they do afterwards, and how many minutes do you really have? That's where planning starts. Divide the minutes into chapters and let the validator check that they add up. Then write the whole talk in the spec, with timing and a script for every slide, and keep rewriting the outline until it works. Build the deck from that. You'll polish it slide by slide, then practice against the clock until two runs in a row fit inside the slot. And when the deck looks done, you'll want to stop. Keep going."
+      },
+      "sources": [
+        {
+          "label": "SKILL.md: stages 5 to 8",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md"
+        }
+      ]
+    },
+    {
+      "id": "where-rounds-go",
+      "type": "standard",
+      "label": "Where the rounds go",
+      "act": "The eight stages",
+      "timing": "1m",
+      "energy": "high",
+      "content": {
+        "heading": "Most rounds happen before the deck",
+        "component": "stat-grid",
+        "data": {
+          "items": [
+            {
+              "value": "14",
+              "label": "outline versions"
+            },
+            {
+              "value": "3",
+              "label": "deck drafts"
+            },
+            {
+              "value": "30",
+              "label": "minutes on stage"
+            }
+          ]
+        },
+        "footer": "One keynote I prepared this autumn."
+      },
+      "notes": {
+        "do": "Let the 14 sit.",
+        "say": "Real numbers, from one keynote I prepared this autumn. Thirty minutes on stage. Behind them: fourteen versions of the outline and three drafts of the deck. Look at the ratio. Most of the work happened before I had slides to look at, and that's where the assistant helped me most. By round fourteen, rebuilding the practice flow took a minute. By hand it would have taken an evening. So when you plan your preparation, put the time there. A deck draft is cheap. A clear outline is not."
+      },
+      "sources": [
+        {
+          "label": "Author's preparation log for one 30-minute keynote, November 2026"
+        }
+      ]
+    },
+    {
+      "id": "your-words",
+      "type": "contrast",
+      "label": "Your words",
+      "act": "The eight stages",
+      "timing": "1m",
+      "energy": "calm",
+      "content": {
+        "heading": "Your words stay yours",
+        "component": "quote",
+        "data": {
+          "text": "Never rewrite the presenter's idea or voice prompt.",
+          "attribution": "SKILL.md, guardrails"
+        }
+      },
+      "notes": {
+        "do": "Read the quote slowly.",
+        "say": "The assistant never rewrites your idea or your voice prompt. That's the rule I care about most. It can ask questions and do the research, then build and check the result. It can tell you a claim is weak. But you decide what you believe and choose the final words, because you have to believe every sentence when you stand up there. Somebody else polishing a sentence for you won't make you believe it. I've tried. It shows on stage."
+      },
+      "sources": [
+        {
+          "label": "SKILL.md: guardrails",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md#guardrails"
+        }
+      ]
+    },
+    {
+      "id": "first-deck",
+      "type": "standard",
+      "label": "First deck",
+      "act": "Get started",
+      "timing": "1m",
+      "energy": "steady",
+      "content": {
+        "heading": "Your first deck",
+        "lead": "Four steps. You need Node.js 22 or later and nothing else.",
         "component": "action-list",
         "data": {
           "items": [
-            "Rewrite one status title as a decision question.",
-            "Name the owner before the meeting ends.",
-            "Record the choice and date in the same place."
+            "Copy the example spec to talk.json",
+            "node scripts/validate.mjs talk.json",
+            "node scripts/build.mjs talk.json --out dist/talk",
+            "Open deck.html and storyboard.html in dist/talk"
           ]
-        },
-        "footer": "Start with one meeting"
+        }
       },
       "notes": {
-        "do": "End on the first action.",
-        "say": "Try this in one real review. Rewrite a status title as the decision the room must make. If that changes the conversation, keep the model."
-      }
+        "do": "Show the commands. Don't type them live.",
+        "say": "You can try this in five minutes. You'll need Node 22 or later on your machine, then clone the repository. There's nothing else to install. Copy the example spec and make it yours, then run the validator, which tells you exactly what's wrong and where if something fails. Build into a folder and open the two files in a browser. That's the loop from then on: change the spec and build again. Leave the HTML alone."
+      },
+      "sources": [
+        {
+          "label": "README: quick start",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework#quick-start"
+        }
+      ]
+    },
+    {
+      "id": "rehearse",
+      "type": "standard",
+      "label": "Rehearse",
+      "act": "Get started",
+      "timing": "45s",
+      "energy": "steady",
+      "content": {
+        "heading": "Rehearse against the clock",
+        "lead": "Each run is saved as a file you can compare with your plan.",
+        "component": "process",
+        "data": {
+          "steps": [
+            "Open the deck with ?rehearse",
+            "Present, then press Shift+S",
+            "Run the rehearsal report"
+          ]
+        }
+      },
+      "notes": {
+        "do": "Point out that only you see the timer.",
+        "say": "Rehearsal is the stage everyone skips. Let me show you what you'd be skipping. Add question mark rehearse to the end of the deck's address and you get a small timer, only for you. Present the whole talk, then press Shift and S when you're done to save the run as a file. The rehearsal report compares every chapter and every slide against your plan, so you've got something concrete to use when you decide where to cut. Then do it again. Two runs in a row inside the slot, and you're done."
+      },
+      "sources": [
+        {
+          "label": "README: rehearsal mode",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework#rehearsal-mode"
+        }
+      ]
+    },
+    {
+      "id": "your-assistant",
+      "type": "standard",
+      "label": "Your assistant",
+      "act": "Get started",
+      "timing": "45s",
+      "energy": "steady",
+      "content": {
+        "heading": "Bring your own assistant",
+        "lead": "Copilot CLI works well. So does any assistant that can read files and run commands.",
+        "component": "statement",
+        "data": {
+          "text": "Give it SKILL.md. It runs the stages with you and stops at every gate for your call."
+        }
+      },
+      "notes": {
+        "do": "Show SKILL.md in the repository.",
+        "say": "You don't have to run every stage by hand. There's a skill file in the repository, SKILL.md, that you can point your assistant at and say: help me with my next talk. It works out where you are in the process and runs the next stage. At every gate it stops and asks you before it goes on. I use Copilot CLI. Anything that can read files and run commands will do."
+      },
+      "sources": [
+        {
+          "label": "SKILL.md",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md"
+        }
+      ]
+    },
+    {
+      "id": "next-talk",
+      "type": "close",
+      "label": "Next talk",
+      "act": "Get started",
+      "timing": "30s",
+      "energy": "calm",
+      "content": {
+        "heading": "Start your next talk with one sentence",
+        "component": "action-list",
+        "data": {
+          "items": [
+            "Write the one thought you want to test",
+            "Talk it through for five minutes, unedited",
+            "Hand both to your assistant with SKILL.md"
+          ]
+        },
+        "footer": "github.com/JW-Sthlm/slidemaster-framework. Built by Johan Wallquist, MIT licensed."
+      },
+      "notes": {
+        "do": "End on the first action. Leave the slide up.",
+        "say": "So here's my ask. Before you open a single slide for your next talk, write one sentence with the thought you want to test. Talk it through for five minutes and keep the transcript, then give both to your assistant together with the skill file. The repository is open and MIT licensed, so take what works for you. And if you build something better, tell me. Thanks."
+      },
+      "sources": [
+        {
+          "label": "GitHub: JW-Sthlm/slidemaster-framework",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework"
+        }
+      ]
     }
   ]
 }
