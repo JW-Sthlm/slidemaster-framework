@@ -56,8 +56,8 @@ async function writeShells(name, shells) {
   return { deck: pathToFileURL(join(dir, "deck.html")).href, storyboard: pathToFileURL(join(dir, "storyboard.html")).href };
 }
 
-async function open(url, { viewport = viewports[0], reducedMotion = "reduce" } = {}) {
-  const context = await browser.newContext({ viewport, reducedMotion });
+async function open(url, { viewport = viewports[0], reducedMotion = "reduce", clock = null } = {}) {
+  const context = await browser.newContext({ viewport, reducedMotion, ...(clock === null ? {} : { timezoneId: "Europe/Stockholm" }) });
   const page = await context.newPage();
   const log = { consoleErrors: [], pageErrors: [], external: [], requests: [], dialogs: [] };
   page.on("console", message => { if (message.type() === "error") log.consoleErrors.push(message.text()); });
@@ -70,8 +70,13 @@ async function open(url, { viewport = viewports[0], reducedMotion = "reduce" } =
     log.dialogs.push(dialog.message());
     dialog.dismiss().catch(() => {});
   });
+  if (clock !== null) {
+    // A paused fake clock makes rehearsal timings exact. settle() needs real timers, so it is skipped.
+    await page.clock.install({ time: clock });
+    await page.clock.pauseAt(clock + 60000);
+  }
   await page.goto(url);
-  await settle(page);
+  if (clock === null) await settle(page);
   return { context, page, log };
 }
 
@@ -175,12 +180,24 @@ const deckState = page => page.evaluate(() => ({
   announcer: document.getElementById("announcer").textContent
 }));
 
+// Runs in the page: free vertical space on the active slide. Fallback fonts differ between
+// systems, so the summary at the end shows how close each deck comes to overflowing.
+function verticalSlack() {
+  const slide = document.querySelector(".slide.is-active");
+  const inner = slide?.querySelector(".slide-inner");
+  if (!inner) return null;
+  const style = getComputedStyle(slide);
+  return Math.round(slide.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom) - inner.offsetHeight);
+}
+const slackReport = [];
+
 async function checkEverySlide(url, label) {
   for (const viewport of viewports) {
     const { context, page, log } = await open(url, { viewport });
     const count = await page.locator(".slide").count();
     assert.ok(count > 0, `${label}: no slides rendered`);
     const problems = [];
+    let tightest = null;
     for (let index = 0; index < count; index += 1) {
       if (index > 0) {
         await page.keyboard.press("ArrowRight");
@@ -192,7 +209,10 @@ async function checkEverySlide(url, label) {
         ...(await page.evaluate(contrastProblems, ".slide.is-active"))
       ];
       found.forEach(problem => problems.push(`${viewport.width}px ${id}: ${problem}`));
+      const slack = await page.evaluate(verticalSlack);
+      if (slack !== null && (tightest === null || slack < tightest.slack)) tightest = { slack, id };
     }
+    if (tightest) slackReport.push(`${label} at ${viewport.width}x${viewport.height}: ${tightest.slack}px on ${tightest.id}`);
     assertClean(log, `${label} at ${viewport.width}px`);
     await dispose(context);
     assert.deepEqual(problems, [], `${label}: layout or contrast problems`);
@@ -305,6 +325,67 @@ try {
       await dispose(context);
     }
     assert.ok(durations["no-preference"] >= 0.2 && durations.reduce <= 0.01, JSON.stringify(durations));
+  });
+
+  // 09:30 in Stockholm. Rehearsal checks pin the time zone so the file name is predictable.
+  const rehearseStart = Date.UTC(2026, 10, 3, 8, 30);
+  const startsDownload = async (page, key) => {
+    const started = page.waitForEvent("download", { timeout: 800 }).then(() => true, () => false);
+    await page.keyboard.press(key);
+    return started;
+  };
+
+  await check("rehearse mode stays off without ?rehearse", async () => {
+    const { context, page, log } = await open(exampleUrls.deck);
+    const state = await page.evaluate(() => ({
+      api: typeof window.__rehearsal,
+      badges: document.querySelectorAll(".rehearse-badge").length,
+      rehearsing: document.body.classList.contains("is-rehearsing")
+    }));
+    assert.deepEqual(state, { api: "undefined", badges: 0, rehearsing: false });
+    assert.equal(await startsDownload(page, "Shift+S"), false, "Shift+S started a download");
+    assert.equal((await deckState(page)).slide, `slide-${example.slides[0].id}`);
+    assertClean(log, "deck without ?rehearse");
+    await dispose(context);
+  });
+
+  await check("rehearse mode records every slide entry and saves the run on Shift+S", async () => {
+    const { context, page, log } = await open(`${exampleUrls.deck}?rehearse`, { clock: rehearseStart });
+    for (const [seconds, key] of [[40, "ArrowRight"], [50, "ArrowRight"], [20, "ArrowLeft"], [30, "ArrowRight"], [60, null]]) {
+      await page.clock.fastForward(seconds * 1000);
+      if (key) await page.keyboard.press(key);
+    }
+    for (const key of ["Alt+Shift+S", "Control+Shift+S", "Meta+Shift+S"]) {
+      assert.equal(await startsDownload(page, key), false, `${key} should be left to the browser`);
+    }
+    assert.equal(await page.locator(".rehearse-save").isVisible(), false, "Save run shows before the last slide");
+    const [download] = await Promise.all([page.waitForEvent("download"), page.keyboard.press("Shift+S")]);
+    assert.equal(download.suggestedFilename(), "rehearsal-20261103-0931.json");
+    const data = JSON.parse(await readFile(await download.path(), "utf8"));
+    assert.equal(data.deck, example.meta.title);
+    assert.equal(data.startedAt, new Date(rehearseStart + 60000).toISOString());
+    assert.equal(data.totalSeconds, 200);
+    assert.deepEqual(data.slides.map(slide => [slide.id, slide.label, slide.seconds, slide.visits]), [
+      ["opening", "Opening", 40, 1],
+      ["cost-of-ambiguity", "Cost", 80, 2],
+      ["decision-loop", "Model", 80, 2],
+      ["review-format", "Format", 0, 0],
+      ["start-next-review", "Close", 0, 0]
+    ]);
+    assert.deepEqual(data.entries.map(entry => [entry.number, entry.offsetSeconds, entry.seconds]), [[1, 0, 40], [2, 40, 50], [3, 90, 20], [2, 110, 30], [3, 140, 60]]);
+    assert.deepEqual((await page.evaluate(() => window.__rehearsal.snapshot())).slides, data.slides);
+    assert.equal(await page.textContent("#announcer"), "Rehearsal saved as rehearsal-20261103-0931.json");
+
+    await page.keyboard.press("End");
+    const save = page.locator(".rehearse-save");
+    assert.ok(await save.isVisible(), "Save run is not offered on the last slide");
+    assert.equal(await page.evaluate(() => document.activeElement === document.body), true, "the badge took focus");
+    await page.keyboard.press("Tab");
+    assert.equal(await page.evaluate(() => document.activeElement.id), "previous", "the badge changed the tab order");
+    const [again] = await Promise.all([page.waitForEvent("download"), save.click()]);
+    assert.equal(again.suggestedFilename(), "rehearsal-20261103-0931.json");
+    assertClean(log, "rehearse mode");
+    await dispose(context);
   });
 
   const componentData = {
@@ -443,12 +524,39 @@ try {
     }
   });
   await check("docs storyboard renders cleanly", () => checkStoryboard(docs.storyboard, "docs storyboard", example.slides.length));
+
+  await check("rehearse mode at both sizes: no overflow, AA contrast, badge clear of the controls and links", async () => {
+    for (const viewport of viewports) {
+      const { context, page, log } = await open(`${docs.deck}?rehearse`, { viewport });
+      const problems = [];
+      const count = await page.locator(".slide").count();
+      for (let index = 0; index < count; index += 1) {
+        if (index > 0) {
+          await page.keyboard.press("ArrowRight");
+          await settle(page);
+        }
+        (await page.evaluate(overflowProblems, ".slide.is-active")).forEach(problem => problems.push(`slide ${index + 1}: ${problem}`));
+      }
+      assert.ok(await page.locator(".rehearse-save").isVisible(), `Save run is not offered on the last slide at ${viewport.width}px`);
+      problems.push(...await page.evaluate(contrastProblems, ".rehearse-badge"));
+      const [badge, ...others] = await page.evaluate(() => [".rehearse-badge", ".controls", ".shell-links a"].flatMap(selector =>
+        [...document.querySelectorAll(selector)].map(element => ({ selector, ...element.getBoundingClientRect().toJSON() }))));
+      if (badge.left < 0 || badge.top < 0 || badge.right > viewport.width || badge.bottom > viewport.height) problems.push("the badge leaves the viewport");
+      for (const other of others) {
+        if (badge.left < other.right && other.left < badge.right && badge.top < other.bottom && other.top < badge.bottom) problems.push(`the badge covers ${other.selector}`);
+      }
+      assertClean(log, `rehearse mode at ${viewport.width}px`);
+      await dispose(context);
+      assert.deepEqual(problems, [], `rehearse mode at ${viewport.width}px`);
+    }
+  });
 } finally {
   await Promise.race([browser.close().catch(() => {}), new Promise(done => setTimeout(done, 3000))]);
   if (!process.env.RENDER_OUT_DIR) await rm(outRoot, { recursive: true, force: true });
 }
 
 const total = results.passed + results.failed.length;
+if (slackReport.length) console.log(`Vertical slack, tightest slide per deck and viewport:\n${slackReport.map(line => `  ${line}`).join("\n")}`);
 if (results.failed.length) {
   console.error(`${results.failed.length} of ${total} render checks failed:\n`);
   results.failed.forEach(failure => console.error(`- ${failure}`));

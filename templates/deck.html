@@ -225,6 +225,39 @@
       white-space: nowrap;
       border: 0;
     }
+    .rehearse-badge {
+      position: fixed;
+      left: 1rem;
+      bottom: 1rem;
+      z-index: 12;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-height: 2.5rem;
+      padding: 0.25rem 0.35rem 0.25rem 0.85rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-large);
+      background: var(--color-surface);
+      color: var(--color-text);
+      box-shadow: var(--shadow-card);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .rehearse-label { margin-right: 0.3rem; color: var(--color-muted); font-family: var(--font-body); }
+    .rehearse-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--color-danger, #b3261e); }
+    .rehearse-save {
+      min-height: 2rem;
+      padding: 0 0.8rem;
+      border: 0;
+      border-radius: var(--radius-small);
+      background: var(--color-accent-strong);
+      color: var(--color-inverse);
+      font-family: var(--font-body);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .rehearse-save[hidden] { display: none; }
     @keyframes enter {
       from { opacity: 0; transform: translateY(0.8rem); }
       to { opacity: 1; transform: translateY(0); }
@@ -232,10 +265,21 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
     }
+    /* Phones. Fallback fonts on Linux run wider than on Windows and macOS, so slides keep
+       vertical headroom here: smaller type minimums, tighter spacing, and short stats side by side. */
     @media (max-width: 700px) {
-      .slide { padding: 2rem 1.2rem 5rem; }
+      .slide { padding: 1.25rem 1rem 5rem; }
+      h2 { font-size: clamp(1.75rem, 8vw, 2.4rem); }
+      .lead { margin-top: 1rem; font-size: clamp(1rem, 4.2vw, 1.1rem); }
+      .component { margin-top: 1.25rem; }
+      .stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: 0.6rem; }
+      .stat, .card { padding: 0.85rem 0.9rem; }
+      .stat-value { font-size: clamp(1.75rem, 8vw, 2.5rem); }
+      .footer { margin-top: 1.25rem; }
       .controls { left: 50%; right: auto; transform: translateX(-50%); }
       .shell-title { display: none; }
+      .rehearse-badge { left: 50%; bottom: 5.25rem; transform: translateX(-50%); white-space: nowrap; }
+      .is-rehearsing .slide { padding-bottom: 8.75rem; }
     }
   </style>
 </head>
@@ -430,6 +474,116 @@
           </section>`;
       }
 
+      // Rehearse mode, only with ?rehearse in the URL. Times every slide entry and saves the run as
+      // rehearsal-YYYYMMDD-HHMM.json for scripts/rehearsal-report.mjs. No network requests.
+      function createRehearsal(title, entries) {
+        const startMs = Date.now();
+        const visits = [];
+        const pad = value => String(value).padStart(2, "0");
+        const round = value => Math.round(value * 10) / 10;
+        const clock = ms => {
+          const seconds = Math.max(0, Math.floor(ms / 1000));
+          const hours = Math.floor(seconds / 3600);
+          const minutes = Math.floor((seconds % 3600) / 60);
+          return `${hours ? `${hours}:${pad(minutes)}` : minutes}:${pad(seconds % 60)}`;
+        };
+
+        const badge = document.createElement("div");
+        badge.className = "rehearse-badge";
+        badge.setAttribute("role", "group");
+        badge.setAttribute("aria-label", "Rehearsal timer");
+        badge.innerHTML = `<span class="rehearse-dot" aria-hidden="true"></span>
+          <span><span class="rehearse-label">Total</span><span data-clock="total">0:00</span></span>
+          <span><span class="rehearse-label">Slide</span><span data-clock="slide">0:00</span></span>
+          <button class="rehearse-save" type="button" hidden>Save run</button>`;
+        document.body.append(badge);
+        document.body.classList.add("is-rehearsing");
+        const totalClock = badge.querySelector('[data-clock="total"]');
+        const slideClock = badge.querySelector('[data-clock="slide"]');
+        const saveButton = badge.querySelector(".rehearse-save");
+
+        function render() {
+          const now = Date.now();
+          totalClock.textContent = clock(now - startMs);
+          slideClock.textContent = clock(visits.length ? now - visits.at(-1).start : 0);
+        }
+
+        function enter(index) {
+          if (visits.length && visits.at(-1).index === index) return;
+          const now = Date.now();
+          if (visits.length) visits.at(-1).end = now;
+          visits.push({ index, start: now, end: null });
+          // On the last slide the badge offers the download. Shift+S saves at any point.
+          saveButton.hidden = index !== entries.length - 1;
+          render();
+        }
+
+        function snapshot() {
+          const now = Date.now();
+          const slides = entries.map((entry, index) => ({ number: index + 1, id: entry.id, label: entry.label, seconds: 0, visits: 0 }));
+          const log = visits.map(visit => {
+            const seconds = ((visit.end ?? now) - visit.start) / 1000;
+            slides[visit.index].seconds += seconds;
+            slides[visit.index].visits += 1;
+            const entry = entries[visit.index];
+            return {
+              number: visit.index + 1,
+              id: entry.id,
+              label: entry.label,
+              at: new Date(visit.start).toISOString(),
+              offsetSeconds: round((visit.start - startMs) / 1000),
+              seconds: round(seconds)
+            };
+          });
+          slides.forEach(slide => { slide.seconds = round(slide.seconds); });
+          let page = location.pathname.split("/").pop() || "";
+          try {
+            page = decodeURIComponent(page);
+          } catch {
+            // Keep the encoded name.
+          }
+          return {
+            format: "rehearsal-recording",
+            version: 1,
+            deck: title,
+            page,
+            startedAt: new Date(startMs).toISOString(),
+            savedAt: new Date(now).toISOString(),
+            totalSeconds: round((now - startMs) / 1000),
+            slideCount: entries.length,
+            slides,
+            entries: log
+          };
+        }
+
+        function fileName() {
+          const date = new Date(startMs);
+          return `rehearsal-${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}-${pad(date.getHours())}${pad(date.getMinutes())}.json`;
+        }
+
+        function save() {
+          const recording = snapshot();
+          const url = URL.createObjectURL(new Blob([`${JSON.stringify(recording, null, 2)}\n`], { type: "application/json" }));
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = fileName();
+          link.hidden = true;
+          document.body.append(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 30000);
+          announcer.textContent = `Rehearsal saved as ${fileName()}`;
+          return recording;
+        }
+
+        saveButton.addEventListener("click", save);
+        setInterval(render, 1000);
+        const api = { version: 1, startedAt: new Date(startMs).toISOString(), snapshot, save, fileName };
+        Object.defineProperty(api, "recording", { enumerable: true, get: snapshot });
+        window.__rehearsal = api;
+        return { enter, save };
+      }
+
       function start(spec) {
         const meta = isObject(spec.meta) ? spec.meta : {};
         const entries = spec.slides.map((raw, index) => {
@@ -456,6 +610,9 @@
           return entries.findIndex(entry => entry.id === hash);
         };
         let current = Math.max(0, indexFromHash());
+        const rehearsal = new URLSearchParams(location.search).has("rehearse")
+          ? createRehearsal(hasText(meta.title) ? String(meta.title) : document.title, entries)
+          : null;
 
         function show(index, updateHash = true) {
           current = Math.min(Math.max(index, 0), slides.length - 1);
@@ -466,6 +623,7 @@
           counter.textContent = `${String(current + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
           progress.style.width = `${((current + 1) / slides.length) * 100}%`;
           announcer.textContent = `Slide ${current + 1} of ${slides.length}: ${entries[current].label}`;
+          rehearsal?.enter(current);
           if (updateHash) {
             try {
               history.replaceState(null, "", `#${encodeURIComponent(entries[current].id)}`);
@@ -492,6 +650,9 @@
           } else if (event.key === "End") {
             event.preventDefault();
             show(slides.length - 1);
+          } else if (rehearsal && event.shiftKey && (event.key === "S" || event.key === "s")) {
+            event.preventDefault();
+            if (!event.repeat) rehearsal.save();
           }
         });
         // Browsers activate a focused button when Space is released. Cancel that so Space advances exactly once.

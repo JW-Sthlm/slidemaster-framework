@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.2.0 - 2026-11-03
+
+### Added
+
+- Rehearsal mode. Open a built deck with `?rehearse` and a small badge shows the total time and the time on the current slide. Shift+S saves `rehearsal-YYYYMMDD-HHMM.json` with the deck title, start time, total and seconds per slide, where revisits add up. The last slide offers a Save run button. Without the parameter nothing changes. The mode works offline, keeps Alt, Ctrl and Meta shortcuts for the browser, and its badge meets WCAG AA contrast without moving keyboard focus.
+- `scripts/rehearsal-report.mjs` compares a recording with the specification: the total against `durationMinutes`, chapters against `budgetMinutes` (or the sum of their slide timings) and slides against `timing`. `--log` appends the run to a log in the `stages/rehearsal-log.md` format and never changes existing rows.
+- `tests/render.mjs` checks rehearsal mode and prints the tightest vertical slack per deck and viewport. `tests/smoke.mjs` covers the report and the log append.
+
+### Changed
+
+- `stages/rehearsal-log.md` explains how to time a run, and its run table starts empty, so the first appended run becomes row 1.
+- `SKILL.md` stage 8 and the README describe rehearsal mode.
+
+### Fixed
+
+- `npm run test:render` failed on Linux CI: the `cost-of-ambiguity` slide overflowed at 390x844 in the example and docs decks, because wider fallback fonts wrapped the heading onto one more line. On narrow screens, headings, leads and stat values now have smaller minimum sizes, slide padding and component spacing are tighter, and stat grids keep short stats side by side instead of stacking 13rem cards. Locally every slide of the example and the docs pages now keeps more than 200 pixels of vertical headroom at 390x844.
+
 ## 1.1.0 - 2026-11-03
 
 ### Added

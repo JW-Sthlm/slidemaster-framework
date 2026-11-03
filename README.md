@@ -20,6 +20,7 @@ Live demo: https://jw-sthlm.github.io/slidemaster-framework/ (built from `exampl
 - `scripts/validate.mjs`: dependency-free validator
 - `scripts/build.mjs`: builds a deck and a storyboard from a specification
 - `scripts/build-docs.mjs`: regenerates the GitHub Pages demo in `docs/`
+- `scripts/rehearsal-report.mjs`: compares a rehearsal recording with the specification and can append the run to a rehearsal log
 - `tests/`: smoke tests, validator probes, and browser render tests
 - `docs/`: build output for GitHub Pages. Do not edit it by hand.
 
@@ -47,7 +48,7 @@ Open `dist/example/deck.html` and `dist/example/storyboard.html` in a browser. T
 2. Edit the narrative, slide content, timing, and speaker notes.
 3. Validate it: `node scripts/validate.mjs path/to/your-spec.json`
 4. Build it: `node scripts/build.mjs path/to/your-spec.json --out dist/your-deck`
-5. Open the deck at presentation size and review every slide. Rehearse with the storyboard.
+5. Open the deck at presentation size and review every slide. Rehearse with the storyboard, and time each run in [rehearsal mode](#rehearsal-mode).
 
 The build stops when the specification has validation errors or when `themes/<meta.theme>.css` does not exist. Warnings are printed but do not stop it. Rebuild after every change to the specification instead of editing the built HTML. Git ignores `dist/`.
 
@@ -86,8 +87,23 @@ The storyboard shows each slide's timing, the cumulative time, chapter totals ag
 | Left arrow, Page Up | Previous slide |
 | Home | First slide |
 | End | Last slide |
+| Shift+S | Save the run, in rehearsal mode only |
 
 Key presses with Alt, Ctrl, or Cmd are left to the browser. You can also use the on-screen arrows. Every slide has a URL hash, such as `deck.html#decision-loop`, so you can link straight to it. A hidden live region announces each change to screen readers, for example "Slide 2 of 5: Cost".
+
+## Rehearsal mode
+
+Open a built deck with `?rehearse`, for example `dist/my-deck/deck.html?rehearse`, to time a run. A small badge shows the total time and the time on the current slide. Present as usual. When you finish, press Shift+S or select **Save run**, which appears on the last slide. The browser downloads `rehearsal-YYYYMMDD-HHMM.json` with the deck title, the start time, the total and the seconds per slide. Revisits add to a slide's time.
+
+Compare the run with the plan:
+
+```bash
+node scripts/rehearsal-report.mjs rehearsal-20260115-0930.json --spec path/to/your-spec.json --log path/to/rehearsal-log.md
+```
+
+The report prints the total against `durationMinutes`, each chapter against its `budgetMinutes` and each slide against its `timing`. A chapter without a budget is compared with the sum of its slide timings. `--log` is optional: it adds the run to the run table of a log in the [stages/rehearsal-log.md](stages/rehearsal-log.md) format and leaves existing rows as they are.
+
+Without `?rehearse`, the deck shows no badge and records nothing. Rehearsal mode works offline and sends nothing over the network. The badge does not move keyboard focus, and the recording stays in the page until you save it.
 
 ## Validation and tests
 
@@ -102,9 +118,9 @@ npm run test:render   # browser tests, needs Playwright
 - Errors: duplicate slide IDs, chapters that list missing slides, a slide in two chapters, chapter budgets that do not add up to `durationMinutes`, and text that contains `</script`, `<!--`, an em dash, a user-specific Windows path, or a local file URL.
 - Warnings: slide timings more than 10 percent away from `durationMinutes`, a chapter more than 10 percent over its budget, headings longer than 90 characters or 12 words, more than 45 body words on a slide, an opening that reads like background, and a final slide without an audience action.
 
-`npm test` runs `tests/smoke.mjs`, which checks the package structure and validates the example and the specifications embedded in `templates/` and `docs/`. It also confirms that `docs/` matches a fresh build, runs the validator probes in `tests/validator-cases.mjs` and the build unit tests, and scans every file for em dashes, user-specific paths, and local file URLs. No browser is involved.
+`npm test` runs `tests/smoke.mjs`, which checks the package structure and validates the example and the specifications embedded in `templates/` and `docs/`. It also confirms that `docs/` matches a fresh build, runs the validator probes in `tests/validator-cases.mjs`, the build unit tests and the rehearsal report tests, and scans every file for em dashes, user-specific paths, and local file URLs. No browser is involved.
 
-`npm run test:render` runs `tests/render.mjs` in headless Chromium at 1920x1080 and 390x844. It builds the example, a deck with every component on every slide type, injection specifications, and broken specifications, and checks the pages in `docs/` as well. Any of these fails the run: console or page errors, requests that leave the page, slide overflow, text below WCAG AA contrast, broken keyboard or hash navigation, or a dialog opened by specification text. Playwright is loaded from `PLAYWRIGHT_MODULE` or the `playwright` package. Without Playwright the test prints a notice and exits, unless `CI=true`, where it fails.
+`npm run test:render` runs `tests/render.mjs` in headless Chromium at 1920x1080 and 390x844. It builds the example, a deck with every component on every slide type, injection specifications, and broken specifications, and checks the pages in `docs/` as well. Any of these fails the run: console or page errors, requests that leave the page, slide overflow, text below WCAG AA contrast, broken keyboard or hash navigation, or a dialog opened by specification text. It also checks that rehearsal mode records and saves a run, keeps its badge readable and clear of the controls, and stays off without `?rehearse`. At the end it prints the tightest vertical slack per deck and viewport, so you can see how close a slide comes to overflowing on another system's fonts. Playwright is loaded from `PLAYWRIGHT_MODULE` or the `playwright` package. Without Playwright the test prints a notice and exits, unless `CI=true`, where it fails.
 
 To run the render tests locally:
 

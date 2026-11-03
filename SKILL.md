@@ -99,7 +99,7 @@ Review visually after every build. With browser automation, check every slide at
 
 ### 8. Rehearsal
 
-Rehearse with the storyboard. It shows every slide with its notes, its timing and the running clock. After each run, log the date, total time against the slot, chapter times against their budgets, stumbles and the changes decided in `rehearsal-log.md`. Turn the log into cuts and shorter notes, update the spec, rebuild and run again.
+Rehearse with the storyboard. It shows every slide with its notes, its timing and the running clock. To time a run, open the built deck with `?rehearse` and save the recording with Shift+S, then run `node scripts/rehearsal-report.mjs <recording.json> --spec <deck-spec.json> --log rehearsal-log.md` to compare it with the plan and append it to the log. After each run, log the date, total time against the slot, chapter times against their budgets, stumbles and the changes decided in `rehearsal-log.md`. Turn the log into cuts and shorter notes, update the spec, rebuild and run again.
 
 The talk is ready when two runs in a row land within the slot and the presenter says it sticks.
 
