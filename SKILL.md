@@ -1,128 +1,122 @@
 ---
 name: slidemaster-framework
-description: "Plan, build, review, and validate narrative-first HTML presentations from a portable JSON deck specification."
+description: "Take a talk from a raw idea to a rehearsed presentation in eight stages: idea, voice prompt, research, context, planning, outline, deck and rehearsal. Builds narrative-first HTML decks and storyboards from a portable JSON deck specification."
 ---
 
 # Slidemaster Framework
 
-Use this skill when the user asks to create, rebuild, audit, or improve a presentation.
+Use this skill when someone wants to create, rebuild, audit or rehearse a presentation.
 
-The workflow works across Copilot Cowork, Microsoft Scout, and Copilot CLI when the runtime has comparable presentation capabilities. Tool names, browser access, file operations, and other runtime details may differ. Adapt the steps below to the capabilities available in the active runtime.
+The presenter owns the idea, the claims and the final words. You capture, research, plan, build, check and help rehearse. This works in Copilot CLI, Copilot Cowork, Microsoft Scout or any runtime with file and command access, ideally with a browser too, so map each step to the tools you have.
 
-## Expected outputs
+## The eight stages
 
-Produce:
+| # | Stage | Purpose | Artifact | Exit gate |
+|---|---|---|---|---|
+| 1 | Idea | A thought worth testing | `idea.md` | The presenter confirms it in their own words |
+| 2 | Voice prompt | Talk it through, unedited | `voice-prompt.md` | Verbatim transcript saved, extraction confirmed |
+| 3 | Research | Facts and counterarguments | `research.md` | Every core claim sourced or flagged, each with its strongest counterargument |
+| 4 | Context | Your own decks and notes | `context.md` | Reuse list agreed |
+| 5 | Planning | Audience, goal and time | `plan.md` and the spec's `meta` | Chapter budgets add up to the talk time |
+| 6 | Outline ↻ | Most iterations | Spec slides with timing and notes, versioned | The validator passes and the presenter approves a version |
+| 7 | Deck ↻ | Slide by slide | `scripts/build.mjs` output | Visual review passes and the presenter approves each chapter |
+| 8 | Rehearsal | Until it sticks | `rehearsal-log.md` | Two runs in a row land within the slot |
 
-1. A validated deck specification.
-2. An interactive HTML deck.
-3. A storyboard with timing and speaker notes.
-4. A concise validation report.
+Templates for every artifact live in `stages/`. Copy them into the talk's own folder.
 
-## Workflow
+Stages run in order, and any stage can send work back: research can change the plan, and a rehearsal can change the outline. Outline and Deck are loops, so expect many rounds and never cap the rounds the presenter drives.
 
-### 1. Confirm the brief
+Start by finding where the talk stands. If stage files exist, read them and continue from the first open gate.
 
-Establish:
+### 1. Idea
 
-- audience
-- duration
-- one central claim
-- desired audience action
-- delivery format
-- required evidence or source material
+Write down the thought the presenter wants to test, why it matters now, and the event facts already known: event, date, slot, language and audience. Ask questions when the idea is unclear, but do not sharpen, reframe or improve it.
 
-When the user has provided enough context, make reasonable assumptions and record them before building.
+### 2. Voice prompt
 
-### 2. Build the narrative
+Ask the presenter to talk the idea through without editing, by dictation or as a typed stream. Save the transcript verbatim. Below it, list the claims, stories, examples, numbers to check and open questions, each anchored with a short quote. The transcript is the presenter's raw thinking: never correct or summarize it in place.
 
-Create an outline before writing any slide markup.
+### 3. Research
 
-A useful default arc is:
+For each core claim, record what holds with source and date, the strongest counterargument, the real numbers, and a verdict: holds, narrow it or drop it. End with at most three questions for the presenter. Research claims in parallel when the runtime allows it.
 
-1. Open with tension, evidence, or a specific problem.
+Do not write hooks, angles or new wording for the presenter's claims. Keep restricted sources out of anything that will be shared.
+
+### 4. Context
+
+Search the presenter's own material: earlier decks, talks, notes, demos and stories. List what can be reused, with a link and a decision for each item: reuse, adapt or leave. Reuse beats rebuilding.
+
+### 5. Planning
+
+Agree on:
+
+- the audience: who they are, what they believe and what they doubt
+- the goal: one action the audience should take (`meta.audienceAction`)
+- the central claim in one sentence (`meta.centralClaim`)
+- language and talk time (`meta.durationMinutes`)
+- chapters with minute budgets that add up to the talk time (`meta.chapters`)
+- demos and audience moments
+
+### 6. Outline ↻
+
+Turn the plan into slides in the deck specification. Start from `examples/deck-spec.example.json` and the schema in `schema/deck-spec.schema.json`. Every slide needs a unique kebab-case ID, an act, one clear heading, one supported component, timing, and speaker notes with `say` and an optional `do`. Add `sources` to slides that make factual claims.
+
+A useful default arc:
+
+1. Open with tension: a problem, a story, a surprising fact or a real question.
 2. State the central claim early.
-3. Support the claim with examples or data.
+3. Support it with examples or data, and meet the strongest counterargument.
 4. Explain what the proof means for the audience.
-5. Close with a concrete action.
+5. Close with the concrete action.
 
-Remove agenda slides, filler transitions, and generic closing slides unless the context calls for them.
-
-### 3. Review the outline
-
-Check:
-
-- Can the central claim be repeated in one sentence?
-- Does every slide support that claim?
-- Is the slide count realistic for the duration?
-- Does the opening create interest without relying on background exposition?
-- Does the final slide tell the audience what to do?
-
-Revise the outline before rendering anything.
-
-### 4. Create the deck specification
-
-Use `schema/deck-spec.schema.json` and start with `examples/deck-spec.example.json`.
-
-Every slide should include:
-
-- a unique kebab-case ID
-- an act or section
-- a clear heading
-- one supported component
-- timing
-- speaker notes with `say` and optional `do`
-
-Keep visible body text concise. Move explanations, caveats, and delivery cues into the speaker notes.
-
-### 5. Validate
-
-Run:
+Validate every version:
 
 ```bash
 node scripts/validate.mjs path/to/deck-spec.json
 ```
 
-Resolve validation errors before rendering. Density warnings are editorial prompts rather than formatting problems, so review the content instead of trying to squeeze it onto the slide.
+Fix errors before going further. Treat warnings about density, long headings or timing against the slot as editorial prompts: cut content or move detail into the notes. Review each version with the presenter and record it in `meta.version`, for example `outline v0.3`. Keep earlier versions so any round can be rolled back.
 
-### 6. Render
+Before the presenter approves a version, check:
 
-Copy the validated JSON into the `deck-spec` script block in:
+- Can the central claim be repeated in one sentence?
+- Does every slide support it?
+- Do the slide timings add up to the talk time?
+- Does the opening create interest without background exposition?
+- Does the final slide tell the audience what to do?
 
-- `templates/deck.html`
-- `templates/storyboard.html`
+### 7. Deck ↻
 
-Save project-specific copies of both files before editing the shells.
+Build the deck and the storyboard from the approved spec:
 
-### 7. Review visually
+```bash
+node scripts/build.mjs path/to/deck-spec.json --out path/to/output
+```
 
-Use browser or screenshot capabilities when they are available.
+The build validates the spec, embeds it safely and inlines the theme, so the output works offline from any folder. Never hand-edit the generated HTML; change the spec and rebuild instead.
 
-Check:
+Review visually after every build. With browser automation, check every slide at presentation size for clipped or overflowing content, readable type, deliberate title wrapping, consistent spacing, contrast, keyboard navigation and correct notes. Without it, open the files and run through the same list. Then polish slide by slide, or chapter by chapter, with the presenter. Keep a copy of each reviewed draft.
 
-- no clipped or overflowing content
-- readable type at the intended display size
-- deliberate title wrapping
-- consistent spacing and component treatment
-- sufficient contrast
-- keyboard navigation
-- correct slide order and notes
+### 8. Rehearsal
 
-If automated browser tools are unavailable, open both HTML files manually and run through the same checks.
+Rehearse with the storyboard. It shows every slide with its notes, its timing and the running clock. After each run, log the date, total time against the slot, chapter times against their budgets, stumbles and the changes decided in `rehearsal-log.md`. Turn the log into cuts and shorter notes, update the spec, rebuild and run again.
 
-### 8. Deliver
+The talk is ready when two runs in a row land within the slot and the presenter says it sticks.
+
+## Deliver
 
 Report:
 
-- files created
-- validation results
-- assumptions
-- known limitations
+- files created or changed
+- validation and review results
+- assumptions and open questions
 - the presenter's next action
 
 ## Guardrails
 
-- Do not invent facts, quotes, or metrics.
-- Do not include private paths, credentials, internal links, or restricted material.
-- Do not embed third-party branding unless the user supplied it and has the right to use it.
-- Prefer system fonts and local assets to keep the output portable.
+- Never invent facts, quotes, people or metrics. A number on a slide is sourced, labelled as an example, or cut.
+- Never rewrite the presenter's idea or voice prompt.
+- Keep private paths, credentials, internal links and restricted material out of shared files.
+- Do not embed third-party branding unless the presenter supplied it and has the right to use it.
+- Prefer system fonts and local assets so the output stays portable.
 - Keep the JSON specification as the editable source of truth.

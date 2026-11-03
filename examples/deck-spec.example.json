@@ -7,8 +7,15 @@
     "language": "en",
     "theme": "clean",
     "durationMinutes": 12,
+    "version": "example v1.1",
     "audience": "Team leads and project owners",
-    "centralClaim": "A project review should produce a decision, not another status summary."
+    "centralClaim": "A project review should produce a decision, not another status summary.",
+    "audienceAction": "Rewrite one status title as a decision question before your next review.",
+    "chapters": [
+      { "id": "frame", "label": "Frame the problem", "budgetMinutes": 3, "slides": ["opening", "cost-of-ambiguity"] },
+      { "id": "model", "label": "Show the model", "budgetMinutes": 6, "slides": ["decision-loop", "review-format"] },
+      { "id": "act", "label": "Ask for action", "budgetMinutes": 3, "slides": ["start-next-review"] }
+    ]
   },
   "slides": [
     {
@@ -57,7 +64,10 @@
       "notes": {
         "do": "Point to the zero last.",
         "say": "The numbers are illustrative, but the pattern is common. A vague review creates follow-up messages, side meetings, and rework. The important number is zero: no decision recorded."
-      }
+      },
+      "sources": [
+        { "label": "Illustrative figures created for this example deck" }
+      ]
     },
     {
       "id": "decision-loop",
@@ -114,7 +124,10 @@
       "notes": {
         "do": "Ask the audience which question is usually missing.",
         "say": "These questions make a review useful. Most teams are good at explaining what changed. Fewer make the choice explicit, and ownership often arrives in a follow-up message."
-      }
+      },
+      "sources": [
+        { "label": "Example review template (placeholder link)", "url": "https://example.com/project-review-template" }
+      ]
     },
     {
       "id": "start-next-review",

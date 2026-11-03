@@ -1,102 +1,671 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="clean">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Slidemaster Framework Demo</title>
+  <title>From scattered updates to clear decisions</title>
   <link rel="icon" href="data:,">
+  <style data-theme-source="themes/clean.css">
+:root,
+[data-theme="clean"] {
+  --color-bg: #f6f4ef;
+  --color-surface: #ffffff;
+  --color-text: #1d2528;
+  --color-muted: #657076;
+  --color-accent: #24756f;
+  --color-accent-strong: #165a56;
+  --color-border: #d8dedc;
+  --color-inverse: #ffffff;
+  --color-danger: #b3261e;
+  --font-display: "Aptos Display", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Aptos", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  --radius-small: 0.4rem;
+  --radius-medium: 0.8rem;
+  --radius-large: 1.4rem;
+  --shadow-card: 0 1rem 3rem rgb(29 37 40 / 0.1);
+  --motion-fast: 160ms;
+  --motion-enter: 420ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+  </style>
   <style>
-    :root { --bg: #f6f4ef; --surface: #fff; --text: #1d2528; --muted: #657076; --accent: #24756f; }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", system-ui, sans-serif; }
-    main { min-height: 100vh; display: grid; place-items: center; padding: 2rem; }
-    .demo { width: min(72rem, 100%); }
-    .slide {
-      display: none;
-      min-height: min(42rem, 78vh);
-      padding: clamp(2rem, 7vw, 6rem);
-      border-radius: 1.5rem;
-      background: var(--surface);
-      box-shadow: 0 1.5rem 5rem rgb(29 37 40 / 0.12);
+    html, body { margin: 0; height: 100%; }
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
     }
-    .slide.active { display: grid; align-content: center; }
-    .eyebrow { color: var(--accent); font-weight: 800; letter-spacing: 0.12em; }
-    h1 { max-width: 13ch; margin: 1rem 0; font-size: clamp(3rem, 8vw, 7rem); line-height: 0.95; text-wrap: balance; }
-    p { max-width: 46rem; color: var(--muted); font-size: clamp(1.1rem, 2.4vw, 1.6rem); line-height: 1.5; }
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem; margin-top: 2rem; }
-    .card { padding: 1.2rem; border: 1px solid #d8dedc; border-radius: 0.8rem; }
-    .card strong { display: block; margin-bottom: 0.4rem; }
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
-    button, a {
+    button { font: inherit; }
+    .shell-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.25rem 1rem;
+      padding: 0.55rem clamp(1rem, 3vw, 2rem);
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface);
+      font-size: 0.875rem;
+    }
+    .shell-title { font-weight: 700; }
+    .shell-links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
+    .shell-links a { color: var(--color-accent-strong); font-weight: 650; text-underline-offset: 0.2em; }
+    .deck { position: relative; flex: 1; min-height: 0; }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      padding: clamp(2rem, 6vw, 6rem);
+      background: var(--color-bg);
+      overflow: auto;
+    }
+    .slide.is-active { display: grid; animation: enter var(--motion-enter) var(--ease-out); }
+    .slide.hero, .slide.close { place-items: center; text-align: center; }
+    .slide.contrast { background: var(--color-accent-strong); color: var(--color-inverse); }
+    .slide-inner { width: min(100%, 76rem); min-width: 0; margin: auto; overflow-wrap: anywhere; }
+    .hero .slide-inner, .close .slide-inner { max-width: 66rem; }
+    .eyebrow {
+      margin: 0 0 1rem;
+      color: var(--color-accent);
+      font-size: clamp(0.75rem, 1.2vw, 1rem);
+      font-weight: 800;
+      letter-spacing: 0.14em;
+    }
+    .contrast .eyebrow { color: var(--color-inverse); opacity: 0.75; }
+    h1, h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      text-wrap: balance;
+    }
+    h1 { font-size: clamp(3rem, 7.5vw, 7rem); }
+    h2 { font-size: clamp(2.4rem, 5.5vw, 5.5rem); max-width: 18ch; }
+    .hero h2, .close h2 { max-width: none; }
+    .lead {
+      max-width: 54rem;
+      margin: 1.4rem 0 0;
+      color: var(--color-muted);
+      font-size: clamp(1.1rem, 2vw, 1.75rem);
+      line-height: 1.45;
+    }
+    .hero .lead, .close .lead { margin-inline: auto; }
+    .contrast .lead { color: var(--color-inverse); opacity: 0.78; }
+    .component { margin-top: clamp(2rem, 5vh, 4rem); }
+    .statement {
+      color: var(--color-accent-strong);
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 4vw, 3.8rem);
+      font-weight: 750;
+    }
+    .contrast .statement { color: var(--color-inverse); }
+    .stat-grid, .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+      gap: 1rem;
+    }
+    .stat, .card {
+      padding: clamp(1.3rem, 3vw, 2.4rem);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-medium);
+      background: var(--color-surface);
+      color: var(--color-text);
+      box-shadow: var(--shadow-card);
+    }
+    .stat-value {
+      color: var(--color-accent-strong);
+      font-family: var(--font-mono);
+      font-size: clamp(2.5rem, 6vw, 5.6rem);
+      font-weight: 800;
+      line-height: 1;
+    }
+    .stat-label, .card p { color: var(--color-muted); line-height: 1.5; }
+    .card h3 { margin: 0 0 0.5rem; font-size: 1.35rem; }
+    .card p { margin: 0; font-size: 1.05rem; }
+    .process {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+      gap: 0.75rem;
+      counter-reset: step;
+    }
+    .process-step {
+      counter-increment: step;
+      padding: 1.2rem;
+      border: 1px solid currentColor;
+      border-radius: var(--radius-medium);
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      font-weight: 750;
+    }
+    .process-step::before {
+      content: counter(step, decimal-leading-zero);
+      display: block;
+      margin-bottom: 1.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+    .quote {
+      max-width: 52rem;
+      padding-left: 1.5rem;
+      border-left: 0.4rem solid var(--color-accent);
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      line-height: 1.16;
+    }
+    .contrast .quote { border-left-color: var(--color-inverse); }
+    .quote cite { display: block; margin-top: 1rem; font-family: var(--font-body); font-size: 1rem; }
+    .action-list { display: grid; gap: 0.8rem; max-width: 50rem; margin-inline: auto; text-align: left; }
+    .action-item {
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-medium);
+      background: var(--color-surface);
+      color: var(--color-text);
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+    }
+    .footer { margin-top: 2rem; color: var(--color-muted); font-size: 0.85rem; }
+    .contrast .footer { color: var(--color-inverse); opacity: 0.85; }
+    .component-error, .error-panel {
+      border-radius: var(--radius-medium, 0.8rem);
+      background: var(--color-surface, #ffffff);
+      color: var(--color-text, #1d2528);
+      text-align: left;
+    }
+    .component-error {
+      padding: 1rem 1.2rem;
+      border: 2px dashed var(--color-danger, #b3261e);
+      font-family: var(--font-mono, monospace);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    .error-panel {
+      max-width: 46rem;
+      margin: clamp(1.5rem, 8vh, 6rem) auto;
+      padding: 2rem;
+      border: 1px solid var(--color-border, #d8dedc);
+      border-left: 0.5rem solid var(--color-danger, #b3261e);
+      font-family: var(--font-body, system-ui, sans-serif);
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+    .error-panel h1 { margin: 0 0 1rem; font-size: 1.6rem; letter-spacing: normal; line-height: 1.2; }
+    .error-panel code, .error-message { font-family: var(--font-mono, monospace); }
+    .error-message { padding: 0.8rem 1rem; border-radius: var(--radius-small, 0.4rem); background: var(--color-bg, #f6f4ef); }
+    .has-error .deck { overflow: auto; padding: 1rem; }
+    .has-error .controls, .has-error .progress { display: none; }
+    .controls {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-large);
+      background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+      backdrop-filter: blur(12px);
+    }
+    .controls button {
+      min-width: 2.5rem;
+      min-height: 2.5rem;
       border: 0;
-      border-radius: 0.5rem;
-      background: var(--accent);
-      color: white;
-      padding: 0.7rem 1rem;
-      font: inherit;
-      text-decoration: none;
+      border-radius: var(--radius-small);
+      background: transparent;
+      color: var(--color-text);
       cursor: pointer;
     }
-    .links { display: flex; gap: 0.6rem; }
-    @media (max-width: 600px) { .links { display: none; } }
+    .controls button:hover { background: var(--color-bg); }
+    .counter { min-width: 4.5rem; text-align: center; font-family: var(--font-mono); font-size: 0.8rem; }
+    .progress {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 11;
+      height: 0.3rem;
+      background: var(--color-border);
+    }
+    .progress span {
+      display: block;
+      height: 100%;
+      background: var(--color-accent);
+      transition: width var(--motion-fast) ease;
+    }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(0.8rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+    }
+    @media (max-width: 700px) {
+      .slide { padding: 2rem 1.2rem 5rem; }
+      .controls { left: 50%; right: auto; transform: translateX(-50%); }
+      .shell-title { display: none; }
+    }
   </style>
 </head>
 <body>
-  <main>
-    <div class="demo">
-      <section class="slide active">
-        <div>
-          <div class="eyebrow">SLIDEMASTER FRAMEWORK</div>
-          <h1>Start with the story</h1>
-          <p>A portable deck specification, interactive HTML shell, storyboard, theme contract, and validation.</p>
-        </div>
-      </section>
-      <section class="slide">
-        <div>
-          <div class="eyebrow">ONE SOURCE OF TRUTH</div>
-          <h1>Build from structured content</h1>
-          <div class="cards">
-            <div class="card"><strong>Specify</strong>Write the narrative and notes in JSON.</div>
-            <div class="card"><strong>Validate</strong>Catch structural problems before design review.</div>
-            <div class="card"><strong>Present</strong>Use a browser with no build step.</div>
-          </div>
-        </div>
-      </section>
-      <section class="slide">
-        <div>
-          <div class="eyebrow">TRY IT</div>
-          <h1>Clone, validate, adapt</h1>
-          <p>The repository includes complete examples and a portable skill for presentation-capable AI assistants.</p>
-        </div>
-      </section>
-      <nav>
-        <button id="back" type="button">Previous</button>
-        <span id="count">1 / 3</span>
-        <div class="links">
-          <a href="storyboard.html">Storyboard</a>
-          <a href="https://github.com/JW-Sthlm/slidemaster-framework">Repository</a>
-        </div>
-        <button id="forward" type="button">Next</button>
-      </nav>
-    </div>
-  </main>
+  <header class="shell-header">
+    <span class="shell-title">Slidemaster Framework demo</span>
+    <nav class="shell-links" aria-label="Project links">
+      <a href="storyboard.html">Storyboard</a>
+      <a href="https://github.com/JW-Sthlm/slidemaster-framework">Repository</a>
+    </nav>
+  </header>
+  <main class="deck" id="deck"></main>
+  <nav class="controls" aria-label="Slide navigation">
+    <button id="previous" type="button" aria-label="Previous slide">&#8592;</button>
+    <span class="counter" id="counter"></span>
+    <button id="next" type="button" aria-label="Next slide">&#8594;</button>
+  </nav>
+  <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+  <div class="visually-hidden" id="announcer" aria-live="polite" aria-atomic="true"></div>
+
   <script type="application/json" id="deck-spec">
-    {"meta":{"title":"Slidemaster Framework Demo"},"slides":[{"id":"story"},{"id":"spec"},{"id":"try"}]}
-  </script>
-  <script>
-    const slides = [...document.querySelectorAll(".slide")];
-    let current = 0;
-    function show(next) {
-      current = Math.min(Math.max(next, 0), slides.length - 1);
-      slides.forEach((slide, index) => slide.classList.toggle("active", index === current));
-      document.getElementById("count").textContent = `${current + 1} / ${slides.length}`;
+{
+  "meta": {
+    "title": "From scattered updates to clear decisions",
+    "subtitle": "A practical operating model for project reviews",
+    "author": "Alex Morgan",
+    "date": "2026-01-15",
+    "language": "en",
+    "theme": "clean",
+    "durationMinutes": 12,
+    "version": "example v1.1",
+    "audience": "Team leads and project owners",
+    "centralClaim": "A project review should produce a decision, not another status summary.",
+    "audienceAction": "Rewrite one status title as a decision question before your next review.",
+    "chapters": [
+      {
+        "id": "frame",
+        "label": "Frame the problem",
+        "budgetMinutes": 3,
+        "slides": [
+          "opening",
+          "cost-of-ambiguity"
+        ]
+      },
+      {
+        "id": "model",
+        "label": "Show the model",
+        "budgetMinutes": 6,
+        "slides": [
+          "decision-loop",
+          "review-format"
+        ]
+      },
+      {
+        "id": "act",
+        "label": "Ask for action",
+        "budgetMinutes": 3,
+        "slides": [
+          "start-next-review"
+        ]
+      }
+    ]
+  },
+  "slides": [
+    {
+      "id": "opening",
+      "type": "hero",
+      "label": "Opening",
+      "act": "Frame",
+      "timing": "1m",
+      "energy": "calm",
+      "content": {
+        "eyebrow": "PROJECT REVIEWS",
+        "heading": "The meeting ended. What changed?",
+        "lead": "If nobody can name the decision, the review was only a report.",
+        "component": "statement",
+        "data": {
+          "text": "Make the decision visible."
+        },
+        "footer": ""
+      },
+      "notes": {
+        "do": "Pause after the question.",
+        "say": "Think about your last project review. You heard updates, saw several charts, and probably discussed risks. But what decision did the meeting produce?"
+      }
+    },
+    {
+      "id": "cost-of-ambiguity",
+      "type": "standard",
+      "label": "Cost",
+      "act": "Frame",
+      "timing": "2m",
+      "energy": "steady",
+      "content": {
+        "eyebrow": "THE COST",
+        "heading": "Ambiguity creates work after the meeting",
+        "lead": "People leave with different interpretations, so the team pays twice.",
+        "component": "stat-grid",
+        "data": {
+          "items": [
+            {
+              "value": "3",
+              "label": "versions of the next step"
+            },
+            {
+              "value": "2x",
+              "label": "the coordination effort"
+            },
+            {
+              "value": "0",
+              "label": "decisions recorded"
+            }
+          ]
+        },
+        "footer": "Illustrative example"
+      },
+      "notes": {
+        "do": "Point to the zero last.",
+        "say": "The numbers are illustrative, but the pattern is common. A vague review creates follow-up messages, side meetings, and rework. The important number is zero: no decision recorded."
+      },
+      "sources": [
+        {
+          "label": "Illustrative figures created for this example deck"
+        }
+      ]
+    },
+    {
+      "id": "decision-loop",
+      "type": "contrast",
+      "label": "Model",
+      "act": "Model",
+      "timing": "3m",
+      "energy": "high",
+      "content": {
+        "eyebrow": "A SIMPLE LOOP",
+        "heading": "Evidence should lead to a named decision",
+        "lead": "Use the same sequence for every review.",
+        "component": "process",
+        "data": {
+          "steps": [
+            "Signal",
+            "Choice",
+            "Owner",
+            "Date"
+          ]
+        },
+        "footer": ""
+      },
+      "notes": {
+        "do": "Move from left to right.",
+        "say": "Start with the signal that matters. Put the real choice on the screen. Name one owner, then set a date. Four steps are enough for most project reviews."
+      }
+    },
+    {
+      "id": "review-format",
+      "type": "standard",
+      "label": "Format",
+      "act": "Model",
+      "timing": "3m",
+      "energy": "steady",
+      "content": {
+        "eyebrow": "THE FORMAT",
+        "heading": "Design each slide around the decision",
+        "lead": "The slide becomes a working surface for the room.",
+        "component": "card-grid",
+        "data": {
+          "items": [
+            {
+              "title": "What changed?",
+              "text": "Show the new signal, not a full history."
+            },
+            {
+              "title": "What is the choice?",
+              "text": "Write the options in plain language."
+            },
+            {
+              "title": "Who acts next?",
+              "text": "Name the owner before leaving the slide."
+            }
+          ]
+        },
+        "footer": ""
+      },
+      "notes": {
+        "do": "Ask the audience which question is usually missing.",
+        "say": "These questions make a review useful. Most teams are good at explaining what changed. Fewer make the choice explicit, and ownership often arrives in a follow-up message."
+      },
+      "sources": [
+        {
+          "label": "Example review template (placeholder link)",
+          "url": "https://example.com/project-review-template"
+        }
+      ]
+    },
+    {
+      "id": "start-next-review",
+      "type": "close",
+      "label": "Close",
+      "act": "Act",
+      "timing": "3m",
+      "energy": "calm",
+      "content": {
+        "eyebrow": "NEXT REVIEW",
+        "heading": "Put the decision in the slide title",
+        "lead": "Test the model in one real meeting this week.",
+        "component": "action-list",
+        "data": {
+          "items": [
+            "Rewrite one status title as a decision question.",
+            "Name the owner before the meeting ends.",
+            "Record the choice and date in the same place."
+          ]
+        },
+        "footer": "Start with one meeting"
+      },
+      "notes": {
+        "do": "End on the first action.",
+        "say": "Try this in one real review. Rewrite a status title as the decision the room must make. If that changes the conversation, keep the model."
+      }
     }
-    document.getElementById("back").addEventListener("click", () => show(current - 1));
-    document.getElementById("forward").addEventListener("click", () => show(current + 1));
-    window.addEventListener("keydown", event => {
-      if (event.key === "ArrowRight" || event.key === " ") show(current + 1);
-      if (event.key === "ArrowLeft") show(current - 1);
-    });
+  ]
+}
+  </script>
+
+  <script>
+    (() => {
+      const deck = document.getElementById("deck");
+      const counter = document.getElementById("counter");
+      const progress = document.getElementById("progress");
+      const announcer = document.getElementById("announcer");
+      const slideTypes = ["hero", "standard", "contrast", "close"];
+      const components = ["statement", "stat-grid", "card-grid", "process", "quote", "action-list"];
+
+      const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      })[character]);
+      const isObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
+      const hasText = value => (typeof value === "string" && value.trim() !== "") || typeof value === "number";
+      const list = value => (Array.isArray(value) ? value : []);
+
+      function showError(title, error) {
+        console.error(error);
+        document.body.classList.add("has-error");
+        deck.innerHTML = `
+          <section class="error-panel" role="alert">
+            <h1>${escapeHtml(title)}</h1>
+            <p class="error-message">${escapeHtml(error && error.message ? error.message : error)}</p>
+            <p>Check the specification with <code>node scripts/validate.mjs path/to/spec.json</code>,
+              then rebuild the deck with <code>node scripts/build.mjs path/to/spec.json --out dist/my-deck</code>.</p>
+          </section>`;
+      }
+
+      const placeholder = message => `<div class="component-error" role="note">${escapeHtml(message)}</div>`;
+
+      function componentHtml(component, rawData) {
+        const data = isObject(rawData) ? rawData : {};
+        const missing = () => placeholder(`Missing or invalid data for the "${component}" component.`);
+        if (component === "statement") {
+          return hasText(data.text) ? `<div class="statement">${escapeHtml(data.text)}</div>` : missing();
+        }
+        if (component === "stat-grid") {
+          const items = list(data.items).filter(isObject);
+          return items.length ? `<div class="stat-grid">${items.map(item =>
+            `<article class="stat"><div class="stat-value">${escapeHtml(item.value)}</div><div class="stat-label">${escapeHtml(item.label)}</div></article>`
+          ).join("")}</div>` : missing();
+        }
+        if (component === "card-grid") {
+          const items = list(data.items).filter(isObject);
+          return items.length ? `<div class="card-grid">${items.map(item =>
+            `<article class="card"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.text)}</p></article>`
+          ).join("")}</div>` : missing();
+        }
+        if (component === "process") {
+          const steps = list(data.steps).filter(hasText);
+          return steps.length ? `<div class="process">${steps.map(step =>
+            `<div class="process-step">${escapeHtml(step)}</div>`
+          ).join("")}</div>` : missing();
+        }
+        if (component === "quote") {
+          if (!hasText(data.text)) return missing();
+          const attribution = hasText(data.attribution) ? `<cite>${escapeHtml(data.attribution)}</cite>` : "";
+          return `<blockquote class="quote">${escapeHtml(data.text)}${attribution}</blockquote>`;
+        }
+        if (component === "action-list") {
+          const items = list(data.items).filter(hasText);
+          return items.length ? `<div class="action-list">${items.map(item =>
+            `<div class="action-item">${escapeHtml(item)}</div>`
+          ).join("")}</div>` : missing();
+        }
+        return placeholder(`Unsupported component "${component}". Use one of: ${components.join(", ")}.`);
+      }
+
+      function slideHtml(slide, index) {
+        const content = isObject(slide.content) ? slide.content : {};
+        const type = slideTypes.includes(slide.type) ? slide.type : "standard";
+        const headingTag = index === 0 ? "h1" : "h2";
+        let component;
+        try {
+          component = componentHtml(content.component, content.data);
+        } catch (error) {
+          console.error(error);
+          component = placeholder(`This component could not be displayed: ${error.message}`);
+        }
+        return `
+          <section class="slide ${type}" id="slide-${escapeHtml(slide.id)}" data-index="${index}"
+            aria-roledescription="slide" aria-label="${escapeHtml(slide.label)}">
+            <div class="slide-inner">
+              ${hasText(content.eyebrow) ? `<p class="eyebrow">${escapeHtml(content.eyebrow)}</p>` : ""}
+              <${headingTag}>${escapeHtml(content.heading)}</${headingTag}>
+              ${hasText(content.lead) ? `<p class="lead">${escapeHtml(content.lead)}</p>` : ""}
+              <div class="component">${component}</div>
+              ${hasText(content.footer) ? `<p class="footer">${escapeHtml(content.footer)}</p>` : ""}
+            </div>
+          </section>`;
+      }
+
+      function start(spec) {
+        const meta = isObject(spec.meta) ? spec.meta : {};
+        const entries = spec.slides.map((raw, index) => {
+          const slide = isObject(raw) ? raw : {};
+          return {
+            ...slide,
+            id: hasText(slide.id) ? String(slide.id) : String(index + 1),
+            label: hasText(slide.label) ? String(slide.label) : `Slide ${index + 1}`
+          };
+        });
+        if (hasText(meta.title)) document.title = meta.title;
+        if (hasText(meta.language)) document.documentElement.lang = meta.language;
+        document.documentElement.dataset.theme = hasText(meta.theme) ? meta.theme : "clean";
+
+        deck.innerHTML = entries.map(slideHtml).join("");
+        const slides = [...deck.querySelectorAll(".slide")];
+        const indexFromHash = () => {
+          let hash = location.hash.slice(1);
+          try {
+            hash = decodeURIComponent(hash);
+          } catch {
+            return -1;
+          }
+          return entries.findIndex(entry => entry.id === hash);
+        };
+        let current = Math.max(0, indexFromHash());
+
+        function show(index, updateHash = true) {
+          current = Math.min(Math.max(index, 0), slides.length - 1);
+          slides.forEach((slide, slideIndex) => {
+            slide.classList.toggle("is-active", slideIndex === current);
+            slide.setAttribute("aria-hidden", slideIndex === current ? "false" : "true");
+          });
+          counter.textContent = `${String(current + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+          progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+          announcer.textContent = `Slide ${current + 1} of ${slides.length}: ${entries[current].label}`;
+          if (updateHash) {
+            try {
+              history.replaceState(null, "", `#${encodeURIComponent(entries[current].id)}`);
+            } catch {
+              // Some embedded viewers block history changes. Navigation still works.
+            }
+          }
+        }
+
+        document.getElementById("previous").addEventListener("click", () => show(current - 1));
+        document.getElementById("next").addEventListener("click", () => show(current + 1));
+        window.addEventListener("keydown", event => {
+          if (event.altKey || event.ctrlKey || event.metaKey || event.isComposing) return;
+          if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]")) return;
+          if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+            event.preventDefault();
+            show(current + 1);
+          } else if (["ArrowLeft", "PageUp"].includes(event.key)) {
+            event.preventDefault();
+            show(current - 1);
+          } else if (event.key === "Home") {
+            event.preventDefault();
+            show(0);
+          } else if (event.key === "End") {
+            event.preventDefault();
+            show(slides.length - 1);
+          }
+        });
+        // Browsers activate a focused button when Space is released. Cancel that so Space advances exactly once.
+        window.addEventListener("keyup", event => {
+          if (event.key === " " && event.target instanceof Element && event.target.closest("button")) event.preventDefault();
+        });
+        window.addEventListener("hashchange", () => {
+          const index = indexFromHash();
+          if (index >= 0) show(index, false);
+        });
+        show(current);
+      }
+
+      let spec;
+      try {
+        spec = JSON.parse(document.getElementById("deck-spec").textContent);
+      } catch (error) {
+        showError("The deck specification could not be read", error);
+        return;
+      }
+      try {
+        if (!isObject(spec) || !Array.isArray(spec.slides) || spec.slides.length === 0) {
+          throw new Error("The specification needs a slides array with at least one slide.");
+        }
+        start(spec);
+      } catch (error) {
+        showError("The deck could not be displayed", error);
+      }
+    })();
   </script>
 </body>
 </html>

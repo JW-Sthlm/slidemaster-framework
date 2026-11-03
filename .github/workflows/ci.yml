@@ -12,10 +12,23 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: "20"
+          node-version: "24"
       - run: npm test
       - run: npm run validate
-
+      - name: Check that docs/ matches the build output
+        run: |
+          npm run build:docs
+          git diff --exit-code -- docs
+          if [ -n "$(git status --porcelain -- docs)" ]; then
+            git status --porcelain -- docs
+            echo "docs/ is out of date. Run npm run build:docs and commit the result."
+            exit 1
+          fi
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - run: npm run test:render

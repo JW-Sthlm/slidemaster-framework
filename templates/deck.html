@@ -8,15 +8,33 @@
   <link rel="stylesheet" href="../themes/clean.css">
   <style>
     * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; }
+    html, body { margin: 0; height: 100%; }
     body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
       background: var(--color-bg);
       color: var(--color-text);
       font-family: var(--font-body);
-      overflow: hidden;
     }
     button { font: inherit; }
-    .deck { position: relative; width: 100vw; height: 100vh; }
+    .shell-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.25rem 1rem;
+      padding: 0.55rem clamp(1rem, 3vw, 2rem);
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface);
+      font-size: 0.875rem;
+    }
+    .shell-title { font-weight: 700; }
+    .shell-links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
+    .shell-links a { color: var(--color-accent-strong); font-weight: 650; text-underline-offset: 0.2em; }
+    .deck { position: relative; flex: 1; min-height: 0; }
     .slide {
       position: absolute;
       inset: 0;
@@ -28,7 +46,7 @@
     .slide.is-active { display: grid; animation: enter var(--motion-enter) var(--ease-out); }
     .slide.hero, .slide.close { place-items: center; text-align: center; }
     .slide.contrast { background: var(--color-accent-strong); color: var(--color-inverse); }
-    .slide-inner { width: min(100%, 76rem); margin: auto; }
+    .slide-inner { width: min(100%, 76rem); min-width: 0; margin: auto; overflow-wrap: anywhere; }
     .hero .slide-inner, .close .slide-inner { max-width: 66rem; }
     .eyebrow {
       margin: 0 0 1rem;
@@ -64,6 +82,7 @@
       font-size: clamp(1.6rem, 4vw, 3.8rem);
       font-weight: 750;
     }
+    .contrast .statement { color: var(--color-inverse); }
     .stat-grid, .card-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
@@ -74,6 +93,7 @@
       border: 1px solid var(--color-border);
       border-radius: var(--radius-medium);
       background: var(--color-surface);
+      color: var(--color-text);
       box-shadow: var(--shadow-card);
     }
     .stat-value {
@@ -116,6 +136,7 @@
       font-size: clamp(1.8rem, 4vw, 3.5rem);
       line-height: 1.16;
     }
+    .contrast .quote { border-left-color: var(--color-inverse); }
     .quote cite { display: block; margin-top: 1rem; font-family: var(--font-body); font-size: 1rem; }
     .action-list { display: grid; gap: 0.8rem; max-width: 50rem; margin-inline: auto; text-align: left; }
     .action-item {
@@ -126,7 +147,35 @@
       font-size: clamp(1.05rem, 2vw, 1.35rem);
     }
     .footer { margin-top: 2rem; color: var(--color-muted); font-size: 0.85rem; }
-    .contrast .footer { color: var(--color-inverse); opacity: 0.65; }
+    .contrast .footer { color: var(--color-inverse); opacity: 0.85; }
+    .component-error, .error-panel {
+      border-radius: var(--radius-medium, 0.8rem);
+      background: var(--color-surface, #ffffff);
+      color: var(--color-text, #1d2528);
+      text-align: left;
+    }
+    .component-error {
+      padding: 1rem 1.2rem;
+      border: 2px dashed var(--color-danger, #b3261e);
+      font-family: var(--font-mono, monospace);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    .error-panel {
+      max-width: 46rem;
+      margin: clamp(1.5rem, 8vh, 6rem) auto;
+      padding: 2rem;
+      border: 1px solid var(--color-border, #d8dedc);
+      border-left: 0.5rem solid var(--color-danger, #b3261e);
+      font-family: var(--font-body, system-ui, sans-serif);
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+    .error-panel h1 { margin: 0 0 1rem; font-size: 1.6rem; letter-spacing: normal; line-height: 1.2; }
+    .error-panel code, .error-message { font-family: var(--font-mono, monospace); }
+    .error-message { padding: 0.8rem 1rem; border-radius: var(--radius-small, 0.4rem); background: var(--color-bg, #f6f4ef); }
+    .has-error .deck { overflow: auto; padding: 1rem; }
+    .has-error .controls, .has-error .progress { display: none; }
     .controls {
       position: fixed;
       right: 1rem;
@@ -165,6 +214,17 @@
       background: var(--color-accent);
       transition: width var(--motion-fast) ease;
     }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
     @keyframes enter {
       from { opacity: 0; transform: translateY(0.8rem); }
       to { opacity: 1; transform: translateY(0); }
@@ -173,26 +233,28 @@
       *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
     }
     @media (max-width: 700px) {
-      body { overflow: auto; }
       .slide { padding: 2rem 1.2rem 5rem; }
       .controls { left: 50%; right: auto; transform: translateX(-50%); }
+      .shell-title { display: none; }
     }
   </style>
 </head>
 <body>
-  <main class="deck" id="deck" aria-live="polite"></main>
+  <!-- slidemaster:header -->
+  <main class="deck" id="deck"></main>
   <nav class="controls" aria-label="Slide navigation">
     <button id="previous" type="button" aria-label="Previous slide">&#8592;</button>
     <span class="counter" id="counter"></span>
     <button id="next" type="button" aria-label="Next slide">&#8594;</button>
   </nav>
   <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+  <div class="visually-hidden" id="announcer" aria-live="polite" aria-atomic="true"></div>
 
   <script type="application/json" id="deck-spec">
   {
     "meta": {
       "title": "A portable presentation shell",
-      "subtitle": "Replace this embedded JSON with a validated deck specification",
+      "subtitle": "Build your own deck with scripts/build.mjs and a validated specification",
       "author": "Presentation Author",
       "date": "2026-01-15",
       "language": "en",
@@ -255,13 +317,13 @@
         "energy": "calm",
         "content": {
           "eyebrow": "YOUR DECK",
-          "heading": "Validate, open, present",
+          "heading": "Validate, build, present",
           "lead": "Use the example specification as your starting point.",
           "component": "action-list",
           "data": {
             "items": [
               "Write the central claim.",
-              "Create and validate the specification.",
+              "Validate the specification and build the deck.",
               "Review every slide at presentation size."
             ]
           },
@@ -278,96 +340,186 @@
 
   <script>
     (() => {
-      const spec = JSON.parse(document.getElementById("deck-spec").textContent);
       const deck = document.getElementById("deck");
       const counter = document.getElementById("counter");
       const progress = document.getElementById("progress");
-      let current = Math.max(0, spec.slides.findIndex(slide => `#${slide.id}` === location.hash));
-
-      document.title = spec.meta.title;
-      document.documentElement.lang = spec.meta.language || "en";
-      document.documentElement.dataset.theme = spec.meta.theme || "clean";
+      const announcer = document.getElementById("announcer");
+      const slideTypes = ["hero", "standard", "contrast", "close"];
+      const components = ["statement", "stat-grid", "card-grid", "process", "quote", "action-list"];
 
       const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
       })[character]);
+      const isObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
+      const hasText = value => (typeof value === "string" && value.trim() !== "") || typeof value === "number";
+      const list = value => (Array.isArray(value) ? value : []);
 
-      function componentHtml(component, data) {
-        if (component === "statement") return `<div class="statement">${escapeHtml(data.text)}</div>`;
+      function showError(title, error) {
+        console.error(error);
+        document.body.classList.add("has-error");
+        deck.innerHTML = `
+          <section class="error-panel" role="alert">
+            <h1>${escapeHtml(title)}</h1>
+            <p class="error-message">${escapeHtml(error && error.message ? error.message : error)}</p>
+            <p>Check the specification with <code>node scripts/validate.mjs path/to/spec.json</code>,
+              then rebuild the deck with <code>node scripts/build.mjs path/to/spec.json --out dist/my-deck</code>.</p>
+          </section>`;
+      }
+
+      const placeholder = message => `<div class="component-error" role="note">${escapeHtml(message)}</div>`;
+
+      function componentHtml(component, rawData) {
+        const data = isObject(rawData) ? rawData : {};
+        const missing = () => placeholder(`Missing or invalid data for the "${component}" component.`);
+        if (component === "statement") {
+          return hasText(data.text) ? `<div class="statement">${escapeHtml(data.text)}</div>` : missing();
+        }
         if (component === "stat-grid") {
-          return `<div class="stat-grid">${data.items.map(item =>
+          const items = list(data.items).filter(isObject);
+          return items.length ? `<div class="stat-grid">${items.map(item =>
             `<article class="stat"><div class="stat-value">${escapeHtml(item.value)}</div><div class="stat-label">${escapeHtml(item.label)}</div></article>`
-          ).join("")}</div>`;
+          ).join("")}</div>` : missing();
         }
         if (component === "card-grid") {
-          return `<div class="card-grid">${data.items.map(item =>
+          const items = list(data.items).filter(isObject);
+          return items.length ? `<div class="card-grid">${items.map(item =>
             `<article class="card"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.text)}</p></article>`
-          ).join("")}</div>`;
+          ).join("")}</div>` : missing();
         }
         if (component === "process") {
-          return `<div class="process">${data.steps.map(step =>
+          const steps = list(data.steps).filter(hasText);
+          return steps.length ? `<div class="process">${steps.map(step =>
             `<div class="process-step">${escapeHtml(step)}</div>`
-          ).join("")}</div>`;
+          ).join("")}</div>` : missing();
         }
         if (component === "quote") {
-          const attribution = data.attribution ? `<cite>${escapeHtml(data.attribution)}</cite>` : "";
+          if (!hasText(data.text)) return missing();
+          const attribution = hasText(data.attribution) ? `<cite>${escapeHtml(data.attribution)}</cite>` : "";
           return `<blockquote class="quote">${escapeHtml(data.text)}${attribution}</blockquote>`;
         }
         if (component === "action-list") {
-          return `<div class="action-list">${data.items.map(item =>
+          const items = list(data.items).filter(hasText);
+          return items.length ? `<div class="action-list">${items.map(item =>
             `<div class="action-item">${escapeHtml(item)}</div>`
-          ).join("")}</div>`;
+          ).join("")}</div>` : missing();
         }
-        return "";
+        return placeholder(`Unsupported component "${component}". Use one of: ${components.join(", ")}.`);
       }
 
-      deck.innerHTML = spec.slides.map((slide, index) => {
-        const content = slide.content;
+      function slideHtml(slide, index) {
+        const content = isObject(slide.content) ? slide.content : {};
+        const type = slideTypes.includes(slide.type) ? slide.type : "standard";
         const headingTag = index === 0 ? "h1" : "h2";
+        let component;
+        try {
+          component = componentHtml(content.component, content.data);
+        } catch (error) {
+          console.error(error);
+          component = placeholder(`This component could not be displayed: ${error.message}`);
+        }
         return `
-          <section class="slide ${escapeHtml(slide.type)}" id="${escapeHtml(slide.id)}"
-            data-index="${index}" aria-label="${escapeHtml(slide.label)}">
+          <section class="slide ${type}" id="slide-${escapeHtml(slide.id)}" data-index="${index}"
+            aria-roledescription="slide" aria-label="${escapeHtml(slide.label)}">
             <div class="slide-inner">
-              ${content.eyebrow ? `<p class="eyebrow">${escapeHtml(content.eyebrow)}</p>` : ""}
+              ${hasText(content.eyebrow) ? `<p class="eyebrow">${escapeHtml(content.eyebrow)}</p>` : ""}
               <${headingTag}>${escapeHtml(content.heading)}</${headingTag}>
-              ${content.lead ? `<p class="lead">${escapeHtml(content.lead)}</p>` : ""}
-              <div class="component">${componentHtml(content.component, content.data)}</div>
-              ${content.footer ? `<p class="footer">${escapeHtml(content.footer)}</p>` : ""}
+              ${hasText(content.lead) ? `<p class="lead">${escapeHtml(content.lead)}</p>` : ""}
+              <div class="component">${component}</div>
+              ${hasText(content.footer) ? `<p class="footer">${escapeHtml(content.footer)}</p>` : ""}
             </div>
           </section>`;
-      }).join("");
-
-      const slides = [...deck.querySelectorAll(".slide")];
-      function show(index, updateHash = true) {
-        current = Math.min(Math.max(index, 0), slides.length - 1);
-        slides.forEach((slide, slideIndex) => {
-          slide.classList.toggle("is-active", slideIndex === current);
-          slide.setAttribute("aria-hidden", slideIndex === current ? "false" : "true");
-        });
-        counter.textContent = `${String(current + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
-        progress.style.width = `${((current + 1) / slides.length) * 100}%`;
-        if (updateHash) history.replaceState(null, "", `#${spec.slides[current].id}`);
       }
 
-      document.getElementById("previous").addEventListener("click", () => show(current - 1));
-      document.getElementById("next").addEventListener("click", () => show(current + 1));
-      window.addEventListener("keydown", event => {
-        if (["ArrowRight", "PageDown", " "].includes(event.key)) {
-          event.preventDefault();
-          show(current + 1);
+      function start(spec) {
+        const meta = isObject(spec.meta) ? spec.meta : {};
+        const entries = spec.slides.map((raw, index) => {
+          const slide = isObject(raw) ? raw : {};
+          return {
+            ...slide,
+            id: hasText(slide.id) ? String(slide.id) : String(index + 1),
+            label: hasText(slide.label) ? String(slide.label) : `Slide ${index + 1}`
+          };
+        });
+        if (hasText(meta.title)) document.title = meta.title;
+        if (hasText(meta.language)) document.documentElement.lang = meta.language;
+        document.documentElement.dataset.theme = hasText(meta.theme) ? meta.theme : "clean";
+
+        deck.innerHTML = entries.map(slideHtml).join("");
+        const slides = [...deck.querySelectorAll(".slide")];
+        const indexFromHash = () => {
+          let hash = location.hash.slice(1);
+          try {
+            hash = decodeURIComponent(hash);
+          } catch {
+            return -1;
+          }
+          return entries.findIndex(entry => entry.id === hash);
+        };
+        let current = Math.max(0, indexFromHash());
+
+        function show(index, updateHash = true) {
+          current = Math.min(Math.max(index, 0), slides.length - 1);
+          slides.forEach((slide, slideIndex) => {
+            slide.classList.toggle("is-active", slideIndex === current);
+            slide.setAttribute("aria-hidden", slideIndex === current ? "false" : "true");
+          });
+          counter.textContent = `${String(current + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+          progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+          announcer.textContent = `Slide ${current + 1} of ${slides.length}: ${entries[current].label}`;
+          if (updateHash) {
+            try {
+              history.replaceState(null, "", `#${encodeURIComponent(entries[current].id)}`);
+            } catch {
+              // Some embedded viewers block history changes. Navigation still works.
+            }
+          }
         }
-        if (["ArrowLeft", "PageUp"].includes(event.key)) {
-          event.preventDefault();
-          show(current - 1);
+
+        document.getElementById("previous").addEventListener("click", () => show(current - 1));
+        document.getElementById("next").addEventListener("click", () => show(current + 1));
+        window.addEventListener("keydown", event => {
+          if (event.altKey || event.ctrlKey || event.metaKey || event.isComposing) return;
+          if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]")) return;
+          if (["ArrowRight", "PageDown", " "].includes(event.key)) {
+            event.preventDefault();
+            show(current + 1);
+          } else if (["ArrowLeft", "PageUp"].includes(event.key)) {
+            event.preventDefault();
+            show(current - 1);
+          } else if (event.key === "Home") {
+            event.preventDefault();
+            show(0);
+          } else if (event.key === "End") {
+            event.preventDefault();
+            show(slides.length - 1);
+          }
+        });
+        // Browsers activate a focused button when Space is released. Cancel that so Space advances exactly once.
+        window.addEventListener("keyup", event => {
+          if (event.key === " " && event.target instanceof Element && event.target.closest("button")) event.preventDefault();
+        });
+        window.addEventListener("hashchange", () => {
+          const index = indexFromHash();
+          if (index >= 0) show(index, false);
+        });
+        show(current);
+      }
+
+      let spec;
+      try {
+        spec = JSON.parse(document.getElementById("deck-spec").textContent);
+      } catch (error) {
+        showError("The deck specification could not be read", error);
+        return;
+      }
+      try {
+        if (!isObject(spec) || !Array.isArray(spec.slides) || spec.slides.length === 0) {
+          throw new Error("The specification needs a slides array with at least one slide.");
         }
-        if (event.key === "Home") show(0);
-        if (event.key === "End") show(slides.length - 1);
-      });
-      window.addEventListener("hashchange", () => {
-        const index = spec.slides.findIndex(slide => `#${slide.id}` === location.hash);
-        if (index >= 0) show(index, false);
-      });
-      show(current);
+        start(spec);
+      } catch (error) {
+        showError("The deck could not be displayed", error);
+      }
     })();
   </script>
 </body>

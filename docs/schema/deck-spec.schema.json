@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jw-sthlm.github.io/slidemaster-framework/schema/deck-spec.schema.json",
+  "title": "Slidemaster Deck Specification",
+  "description": "Structured content for a Slidemaster deck and storyboard (version 1.1).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["meta", "slides"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "meta": { "$ref": "#/$defs/meta" },
+    "slides": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/slide" }
+    }
+  },
+  "$defs": {
+    "text": {
+      "description": "A string with at least one non-whitespace character.",
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "id": {
+      "description": "A kebab-case identifier.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "subtitle", "author", "date", "language", "theme", "durationMinutes"],
+      "properties": {
+        "title": { "$ref": "#/$defs/text" },
+        "subtitle": { "$ref": "#/$defs/text" },
+        "author": { "$ref": "#/$defs/text" },
+        "date": {
+          "description": "Calendar date in YYYY-MM-DD format.",
+          "type": "string",
+          "format": "date",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "language": {
+          "description": "Language tag for the deck, such as en or sv.",
+          "type": "string",
+          "minLength": 2,
+          "pattern": "^\\S+$"
+        },
+        "theme": {
+          "description": "Name of a stylesheet in themes/, without the .css extension.",
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "durationMinutes": { "type": "integer", "minimum": 1 },
+        "audience": { "type": "string" },
+        "centralClaim": { "type": "string" },
+        "audienceAction": {
+          "description": "What the audience should do after the talk.",
+          "$ref": "#/$defs/text"
+        },
+        "version": {
+          "description": "Working version, such as \"outline v0.3\" or \"deck draft 2\".",
+          "$ref": "#/$defs/text"
+        },
+        "chapters": {
+          "description": "Optional grouping of slides with time budgets.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/chapter" }
+        }
+      }
+    },
+    "chapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "slides"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "label": { "$ref": "#/$defs/text" },
+        "budgetMinutes": { "type": "number", "exclusiveMinimum": 0 },
+        "slides": {
+          "description": "IDs of the slides in this chapter.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label"],
+      "properties": {
+        "label": { "$ref": "#/$defs/text" },
+        "url": { "type": "string", "pattern": "^https?://\\S+$" }
+      }
+    },
+    "slide": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "label", "act", "timing", "content", "notes"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "type": { "enum": ["hero", "standard", "contrast", "close"] },
+        "label": { "$ref": "#/$defs/text" },
+        "act": { "$ref": "#/$defs/text" },
+        "timing": {
+          "description": "Speaking time, such as 2m, 45s or 1m30s.",
+          "type": "string",
+          "pattern": "^(?:[1-9][0-9]*m(?:[1-9][0-9]*s)?|[1-9][0-9]*s)$"
+        },
+        "energy": { "enum": ["calm", "steady", "high"] },
+        "content": { "$ref": "#/$defs/content" },
+        "notes": { "$ref": "#/$defs/notes" },
+        "sources": {
+          "description": "Shown in the storyboard under the notes, never on the slide.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/source" }
+        }
+      }
+    },
+    "notes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["say"],
+      "properties": {
+        "say": { "$ref": "#/$defs/text" },
+        "do": { "type": "string" }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading", "component", "data"],
+      "properties": {
+        "eyebrow": { "type": "string" },
+        "heading": { "$ref": "#/$defs/text" },
+        "lead": { "type": "string" },
+        "component": {
+          "enum": ["statement", "stat-grid", "card-grid", "process", "quote", "action-list"]
+        },
+        "data": { "type": "object" },
+        "footer": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["component"], "properties": { "component": { "const": "statement" } } },
+          "then": { "properties": { "data": { "$ref": "#/$defs/statementData" } } }
+        },
+        {
+          "if": { "required": ["component"], "properties": { "component": { "const": "stat-grid" } } },
+          "then": { "properties": { "data": { "$ref": "#/$defs/statGridData" } } }
+        },
+        {
+          "if": { "required": ["component"], "properties": { "component": { "const": "card-grid" } } },
+          "then": { "properties": { "data": { "$ref": "#/$defs/cardGridData" } } }
+        },
+        {
+          "if": { "required": ["component"], "properties": { "component": { "const": "process" } } },
+          "then": { "properties": { "data": { "$ref": "#/$defs/processData" } } }
+        },
+        {
+          "if": { "required": ["component"], "properties": { "component": { "const": "quote" } } },
+          "then": { "properties": { "data": { "$ref": "#/$defs/quoteData" } } }
+        },
+        {
+          "if": { "required": ["component"], "properties": { "component": { "const": "action-list" } } },
+          "then": { "properties": { "data": { "$ref": "#/$defs/actionListData" } } }
+        }
+      ]
+    },
+    "statementData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "text": { "$ref": "#/$defs/text" }
+      }
+    },
+    "statGridData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["value", "label"],
+            "properties": {
+              "value": { "$ref": "#/$defs/text" },
+              "label": { "$ref": "#/$defs/text" }
+            }
+          }
+        }
+      }
+    },
+    "cardGridData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["title", "text"],
+            "properties": {
+              "title": { "$ref": "#/$defs/text" },
+              "text": { "$ref": "#/$defs/text" }
+            }
+          }
+        }
+      }
+    },
+    "processData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/text" }
+        }
+      }
+    },
+    "quoteData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "text": { "$ref": "#/$defs/text" },
+        "attribution": { "type": "string" }
+      }
+    },
+    "actionListData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/text" }
+        }
+      }
+    }
+  }
+}

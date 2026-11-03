@@ -1,61 +1,99 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="clean">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Slidemaster Storyboard</title>
   <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../themes/clean.css">
   <style>
-    :root {
-      --bg: #f1f3f2;
-      --surface: #ffffff;
-      --text: #1d2528;
-      --muted: #667277;
-      --accent: #24756f;
-      --border: #d8dedc;
-    }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: "Segoe UI", system-ui, sans-serif; }
-    header { padding: 2rem clamp(1rem, 5vw, 4rem); background: var(--accent); color: white; }
-    header h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 3rem); }
-    header p { margin: 0.5rem 0 0; opacity: 0.82; }
-    main { width: min(92rem, 100%); margin: auto; padding: 2rem clamp(1rem, 4vw, 3rem) 5rem; }
+    body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); }
+    .shell-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.25rem 1rem;
+      padding: 0.55rem clamp(1rem, 3vw, 2rem);
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface);
+      font-size: 0.875rem;
+    }
+    .shell-title { font-weight: 700; }
+    .shell-links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
+    .shell-links a { color: var(--color-accent-strong); font-weight: 650; text-underline-offset: 0.2em; }
+    .page-header { padding: 2rem clamp(1rem, 5vw, 4rem); background: var(--color-accent); color: var(--color-inverse); overflow-wrap: anywhere; }
+    .page-header h1 { margin: 0; font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 3rem); }
+    .page-header p { margin: 0.5rem 0 0; }
+    main { width: min(92rem, 100%); margin: auto; padding: 2rem clamp(1rem, 4vw, 3rem) 5rem; overflow-wrap: anywhere; }
     .summary { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2rem; }
-    .summary span { padding: 0.45rem 0.75rem; border-radius: 999px; background: var(--surface); color: var(--muted); }
-    .act { margin: 2rem 0 0.8rem; color: var(--accent); font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .summary span { padding: 0.45rem 0.75rem; border: 1px solid transparent; border-radius: 999px; background: var(--color-surface); color: var(--color-text); }
+    .summary .is-warning, .chapter.is-warning { border: 2px solid var(--color-danger, #b3261e); }
+    .intent { display: grid; gap: 0.75rem; margin: 0 0 2rem; }
+    .intent div { padding: 1rem 1.2rem; border-left: 0.3rem solid var(--color-accent); background: var(--color-surface); }
+    .intent dt, .section-title, .act { color: var(--color-accent); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+    .intent dd { margin: 0.3rem 0 0; line-height: 1.5; }
+    .section-title, .act { margin: 2rem 0 0.8rem; font-size: 1rem; font-weight: 700; }
+    .chapters { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.75rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+    .chapter { padding: 1rem 1.2rem; border: 1px solid var(--color-border); border-radius: var(--radius-medium); background: var(--color-surface); line-height: 1.5; }
+    .chapter strong, .chapter span { display: block; }
+    .chapter strong { margin-bottom: 0.3rem; }
     .slide-row {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
       margin-bottom: 1rem;
-      border: 1px solid var(--border);
-      border-radius: 1rem;
-      background: var(--surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-large);
+      background: var(--color-surface);
       overflow: hidden;
     }
-    .preview { min-height: 20rem; padding: 2rem; background: #f8f6f1; }
-    .preview .number { font-family: ui-monospace, monospace; color: var(--muted); }
-    .preview .eyebrow { margin-top: 2rem; color: var(--accent); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; }
-    .preview h2 { margin: 0.5rem 0; max-width: 16ch; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; text-wrap: balance; }
-    .preview p { max-width: 42rem; color: var(--muted); line-height: 1.5; }
-    .component-summary { margin-top: 2rem; padding: 1rem; border-left: 0.3rem solid var(--accent); background: white; }
-    .notes { padding: 2rem; border-left: 1px solid var(--border); }
+    .preview { min-width: 0; min-height: 20rem; padding: 2rem; background: var(--color-bg); }
+    .preview .number { font-family: var(--font-mono); color: var(--color-muted); }
+    .preview .eyebrow { margin-top: 2rem; color: var(--color-accent); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; }
+    .preview h2 { margin: 0.5rem 0; max-width: 16ch; font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; text-wrap: balance; }
+    .preview p { max-width: 42rem; color: var(--color-muted); line-height: 1.5; }
+    .component-summary { margin-top: 2rem; padding: 1rem; border-left: 0.3rem solid var(--color-accent); background: var(--color-surface); }
+    .component-summary.is-warning { border-left-color: var(--color-danger, #b3261e); font-family: var(--font-mono); }
+    .notes { min-width: 0; padding: 2rem; border-left: 1px solid var(--color-border); }
     .meta { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
-    .meta span { padding: 0.3rem 0.55rem; border-radius: 0.35rem; background: var(--bg); color: var(--muted); font-size: 0.8rem; }
-    .notes h3 { margin: 1.4rem 0 0.4rem; color: var(--accent); font-size: 0.8rem; letter-spacing: 0.08em; }
+    .meta span { padding: 0.3rem 0.55rem; border-radius: var(--radius-small); background: var(--color-bg); color: var(--color-text); font-size: 0.8rem; }
+    .notes h3 { margin: 1.4rem 0 0.4rem; color: var(--color-accent); font-size: 0.8rem; letter-spacing: 0.08em; }
     .notes p { margin: 0; line-height: 1.65; }
+    .sources { margin: 0; padding-left: 1.2rem; line-height: 1.6; }
+    .sources a { color: var(--color-accent-strong); }
+    .error-panel {
+      max-width: 46rem;
+      margin: 2rem auto;
+      padding: 2rem;
+      border: 1px solid var(--color-border, #d8dedc);
+      border-left: 0.5rem solid var(--color-danger, #b3261e);
+      border-radius: var(--radius-medium, 0.8rem);
+      background: var(--color-surface, #ffffff);
+      color: var(--color-text, #1d2528);
+      line-height: 1.5;
+    }
+    .error-panel h2 { margin: 0 0 1rem; font-size: 1.6rem; }
+    .error-panel code, .error-message { font-family: var(--font-mono, monospace); }
+    .error-message { padding: 0.8rem 1rem; border-radius: var(--radius-small, 0.4rem); background: var(--color-bg, #f6f4ef); }
     @media (max-width: 800px) {
       .slide-row { grid-template-columns: 1fr; }
-      .notes { border-top: 1px solid var(--border); border-left: 0; }
+      .notes { border-top: 1px solid var(--color-border); border-left: 0; }
+    }
+    @media (max-width: 700px) {
+      .shell-title { display: none; }
     }
   </style>
 </head>
 <body>
-  <header>
+  <!-- slidemaster:header -->
+  <header class="page-header">
     <h1 id="title">Storyboard</h1>
     <p id="subtitle"></p>
   </header>
-  <main>
+  <main id="main">
     <div class="summary" id="summary"></div>
+    <div id="overview"></div>
     <div id="storyboard"></div>
   </main>
 
@@ -126,13 +164,13 @@
         "energy": "calm",
         "content": {
           "eyebrow": "YOUR DECK",
-          "heading": "Validate, open, present",
+          "heading": "Validate, build, present",
           "lead": "Use the example specification as your starting point.",
           "component": "action-list",
           "data": {
             "items": [
               "Write the central claim.",
-              "Create and validate the specification.",
+              "Validate the specification and build the deck.",
               "Review every slide at presentation size."
             ]
           },
@@ -149,59 +187,203 @@
 
   <script>
     (() => {
-      const spec = JSON.parse(document.getElementById("deck-spec").textContent);
+      const main = document.getElementById("main");
       const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
       })[character]);
-      const describe = content => {
-        const data = content.data;
-        if (content.component === "statement") return data.text;
-        if (content.component === "stat-grid") return data.items.map(item => `${item.value}: ${item.label}`).join(" | ");
-        if (content.component === "card-grid") return data.items.map(item => item.title).join(" | ");
-        if (content.component === "process") return data.steps.join(" to ");
-        if (content.component === "quote") return data.text;
-        if (content.component === "action-list") return data.items.join(" | ");
-        return content.component;
+      const isObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
+      const hasText = value => (typeof value === "string" && value.trim() !== "") || typeof value === "number";
+      const list = value => (Array.isArray(value) ? value : []);
+      const parseTiming = value => {
+        const match = typeof value === "string" ? /^(?:([1-9][0-9]*)m)?(?:([1-9][0-9]*)s)?$/.exec(value) : null;
+        if (!match || (!match[1] && !match[2])) return null;
+        return Number(match[1] || 0) * 60 + Number(match[2] || 0);
+      };
+      const formatSeconds = total => {
+        const minutes = Math.floor(total / 60);
+        const seconds = Math.round(total % 60);
+        if (!minutes) return `${seconds}s`;
+        return seconds ? `${minutes}m${seconds}s` : `${minutes}m`;
       };
 
-      document.title = `Storyboard: ${spec.meta.title}`;
-      document.documentElement.lang = spec.meta.language || "en";
-      document.getElementById("title").textContent = spec.meta.title;
-      document.getElementById("subtitle").textContent = spec.meta.subtitle;
+      function showError(title, error) {
+        console.error(error);
+        main.innerHTML = `
+          <section class="error-panel" role="alert">
+            <h2>${escapeHtml(title)}</h2>
+            <p class="error-message">${escapeHtml(error && error.message ? error.message : error)}</p>
+            <p>Check the specification with <code>node scripts/validate.mjs path/to/spec.json</code>,
+              then rebuild with <code>node scripts/build.mjs path/to/spec.json --out dist/my-deck</code>.</p>
+          </section>`;
+      }
 
-      const acts = [...new Set(spec.slides.map(slide => slide.act))];
-      document.getElementById("summary").innerHTML = [
-        `${spec.slides.length} slides`,
-        `${acts.length} acts`,
-        `${spec.meta.durationMinutes} minutes`,
-        spec.meta.author
-      ].map(item => `<span>${escapeHtml(item)}</span>`).join("");
+      function describe(content) {
+        const data = isObject(content.data) ? content.data : {};
+        const missing = { text: `Missing or invalid data for the "${content.component}" component`, warning: true };
+        if (content.component === "statement") return hasText(data.text) ? { text: String(data.text) } : missing;
+        if (content.component === "stat-grid") {
+          const items = list(data.items).filter(isObject);
+          return items.length ? { text: items.map(item => `${item.value}: ${item.label}`).join(" | ") } : missing;
+        }
+        if (content.component === "card-grid") {
+          const items = list(data.items).filter(isObject);
+          return items.length ? { text: items.map(item => item.title).join(" | ") } : missing;
+        }
+        if (content.component === "process") {
+          const steps = list(data.steps).filter(hasText);
+          return steps.length ? { text: steps.join(" to ") } : missing;
+        }
+        if (content.component === "quote") {
+          if (!hasText(data.text)) return missing;
+          return { text: hasText(data.attribution) ? `${data.text} (${data.attribution})` : String(data.text) };
+        }
+        if (content.component === "action-list") {
+          const items = list(data.items).filter(hasText);
+          return items.length ? { text: items.join(" | ") } : missing;
+        }
+        return { text: `Unsupported component "${content.component}"`, warning: true };
+      }
 
-      let activeAct = "";
-      document.getElementById("storyboard").innerHTML = spec.slides.map((slide, index) => {
-        const actHeading = slide.act !== activeAct ? `<h2 class="act">${escapeHtml(slide.act)}</h2>` : "";
-        activeAct = slide.act;
-        return `${actHeading}
-          <article class="slide-row" id="${escapeHtml(slide.id)}">
-            <section class="preview">
-              <div class="number">${String(index + 1).padStart(2, "0")} / ${String(spec.slides.length).padStart(2, "0")}</div>
-              ${slide.content.eyebrow ? `<div class="eyebrow">${escapeHtml(slide.content.eyebrow)}</div>` : ""}
-              <h2>${escapeHtml(slide.content.heading)}</h2>
-              ${slide.content.lead ? `<p>${escapeHtml(slide.content.lead)}</p>` : ""}
-              <div class="component-summary">${escapeHtml(describe(slide.content))}</div>
-            </section>
-            <section class="notes">
-              <div class="meta">
-                <span>${escapeHtml(slide.timing)}</span>
-                <span>${escapeHtml(slide.energy || "steady")}</span>
-                <span>${escapeHtml(slide.label)}</span>
-              </div>
-              ${slide.notes.do ? `<h3>DO</h3><p>${escapeHtml(slide.notes.do)}</p>` : ""}
-              <h3>SAY</h3>
-              <p>${escapeHtml(slide.notes.say)}</p>
-            </section>
-          </article>`;
-      }).join("");
+      const sourceHtml = source => {
+        const label = escapeHtml(source.label);
+        const link = typeof source.url === "string" && /^https?:\/\//i.test(source.url);
+        return link ? `<li><a href="${escapeHtml(source.url)}">${label}</a></li>` : `<li>${label}</li>`;
+      };
+
+      function chapterHtml(chapter, slides) {
+        const members = slides.filter(slide => list(chapter.slides).includes(slide.id));
+        const used = members.reduce((sum, slide) => sum + (slide.seconds || 0), 0);
+        const hasBudget = typeof chapter.budgetMinutes === "number" && chapter.budgetMinutes > 0;
+        const budget = hasBudget ? chapter.budgetMinutes * 60 : 0;
+        let status = "No budget set";
+        if (hasBudget && used > budget) status = `Over budget by ${formatSeconds(used - budget)}`;
+        else if (hasBudget && used < budget) status = `Within budget, ${formatSeconds(budget - used)} to spare`;
+        else if (hasBudget) status = "On budget";
+        return `
+          <li class="chapter${hasBudget && used > budget ? " is-warning" : ""}">
+            <strong>${escapeHtml(chapter.label)}</strong>
+            <span>${members.length} slide${members.length === 1 ? "" : "s"}</span>
+            <span>${escapeHtml(formatSeconds(used))}${hasBudget ? ` of ${escapeHtml(formatSeconds(budget))} budget` : " planned"}</span>
+            <span>${escapeHtml(status)}</span>
+          </li>`;
+      }
+
+      function render(spec) {
+        const meta = isObject(spec.meta) ? spec.meta : {};
+        const slides = spec.slides.map((raw, index) => {
+          const slide = isObject(raw) ? raw : {};
+          return {
+            ...slide,
+            id: hasText(slide.id) ? String(slide.id) : String(index + 1),
+            label: hasText(slide.label) ? String(slide.label) : `Slide ${index + 1}`,
+            content: isObject(slide.content) ? slide.content : {},
+            notes: isObject(slide.notes) ? slide.notes : {},
+            seconds: parseTiming(slide.timing)
+          };
+        });
+        const chapters = list(meta.chapters).filter(isObject);
+        const chapterOf = new Map();
+        chapters.forEach(chapter => list(chapter.slides).forEach(id => {
+          if (!chapterOf.has(id)) chapterOf.set(id, chapter);
+        }));
+        const total = slides.reduce((sum, slide) => sum + (slide.seconds || 0), 0);
+        const planned = Number.isFinite(meta.durationMinutes) && meta.durationMinutes > 0 ? meta.durationMinutes * 60 : 0;
+        const offPlan = planned > 0 && Math.abs(total - planned) > planned * 0.1;
+
+        if (hasText(meta.title)) {
+          document.title = `Storyboard: ${meta.title}`;
+          document.getElementById("title").textContent = meta.title;
+        }
+        document.getElementById("subtitle").textContent = hasText(meta.subtitle) ? meta.subtitle : "";
+        if (hasText(meta.language)) document.documentElement.lang = meta.language;
+        document.documentElement.dataset.theme = hasText(meta.theme) ? meta.theme : "clean";
+
+        const acts = new Set(slides.map(slide => slide.act).filter(hasText));
+        const chips = [
+          { text: `${slides.length} slides` },
+          { text: `${acts.size} acts` },
+          planned ? { text: `Planned ${meta.durationMinutes} min` } : null,
+          { text: `Slide timings ${formatSeconds(total)}${offPlan ? ", more than 10% off the plan" : ""}`, warning: offPlan },
+          hasText(meta.author) ? { text: meta.author } : null,
+          hasText(meta.version) ? { text: `Version: ${meta.version}` } : null
+        ].filter(Boolean);
+        document.getElementById("summary").innerHTML = chips.map(chip =>
+          `<span${chip.warning ? ' class="is-warning"' : ""}>${escapeHtml(chip.text)}</span>`
+        ).join("");
+
+        const intent = [["Central claim", meta.centralClaim], ["Audience", meta.audience], ["Audience action", meta.audienceAction]]
+          .filter(([, value]) => hasText(value));
+        document.getElementById("overview").innerHTML = [
+          intent.length ? `<dl class="intent">${intent.map(([term, value]) =>
+            `<div><dt>${escapeHtml(term)}</dt><dd>${escapeHtml(value)}</dd></div>`
+          ).join("")}</dl>` : "",
+          chapters.length ? `<h2 class="section-title">Chapters</h2><ul class="chapters">${chapters.map(chapter => chapterHtml(chapter, slides)).join("")}</ul>` : ""
+        ].join("");
+
+        let elapsed = 0;
+        let activeAct = null;
+        document.getElementById("storyboard").innerHTML = slides.map((slide, index) => {
+          elapsed += slide.seconds || 0;
+          const actHeading = slide.act !== activeAct ? `<h2 class="act">${escapeHtml(slide.act)}</h2>` : "";
+          activeAct = slide.act;
+          const summary = describe(slide.content);
+          const chapter = chapterOf.get(slide.id);
+          const sources = list(slide.sources).filter(source => isObject(source) && hasText(source.label));
+          const chips = [
+            `Time ${slide.seconds === null ? "not set" : formatSeconds(slide.seconds)}`,
+            `Cumulative ${formatSeconds(elapsed)}`,
+            hasText(slide.energy) ? slide.energy : "steady",
+            slide.label,
+            chapter ? `Chapter: ${chapter.label}` : ""
+          ].filter(Boolean);
+          return `${actHeading}
+            <article class="slide-row" id="slide-${escapeHtml(slide.id)}">
+              <section class="preview">
+                <div class="number">${String(index + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}</div>
+                ${hasText(slide.content.eyebrow) ? `<div class="eyebrow">${escapeHtml(slide.content.eyebrow)}</div>` : ""}
+                <h2>${escapeHtml(slide.content.heading)}</h2>
+                ${hasText(slide.content.lead) ? `<p>${escapeHtml(slide.content.lead)}</p>` : ""}
+                <div class="component-summary${summary.warning ? " is-warning" : ""}">${escapeHtml(summary.text)}</div>
+              </section>
+              <section class="notes">
+                <div class="meta">${chips.map(chip => `<span>${escapeHtml(chip)}</span>`).join("")}</div>
+                ${hasText(slide.notes.do) ? `<h3>DO</h3><p>${escapeHtml(slide.notes.do)}</p>` : ""}
+                <h3>SAY</h3>
+                <p>${escapeHtml(slide.notes.say)}</p>
+                ${sources.length ? `<h3>SOURCES</h3><ul class="sources">${sources.map(sourceHtml).join("")}</ul>` : ""}
+              </section>
+            </article>`;
+        }).join("");
+
+        const scrollToHash = () => {
+          let id = location.hash.slice(1);
+          try {
+            id = decodeURIComponent(id);
+          } catch {
+            return;
+          }
+          const row = id ? document.getElementById(`slide-${id}`) : null;
+          if (row) row.scrollIntoView();
+        };
+        window.addEventListener("hashchange", scrollToHash);
+        scrollToHash();
+      }
+
+      let spec;
+      try {
+        spec = JSON.parse(document.getElementById("deck-spec").textContent);
+      } catch (error) {
+        showError("The storyboard specification could not be read", error);
+        return;
+      }
+      try {
+        if (!isObject(spec) || !Array.isArray(spec.slides) || spec.slides.length === 0) {
+          throw new Error("The specification needs a slides array with at least one slide.");
+        }
+        render(spec);
+      } catch (error) {
+        showError("The storyboard could not be displayed", error);
+      }
     })();
   </script>
 </body>
