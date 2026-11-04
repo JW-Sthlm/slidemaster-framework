@@ -26,6 +26,18 @@
     .page-header { padding: 2rem clamp(1rem, 5vw, 4rem); background: var(--color-accent); color: var(--color-inverse); overflow-wrap: anywhere; }
     .page-header h1 { margin: 0; font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 3rem); }
     .page-header p { margin: 0.5rem 0 0; }
+    .page-header .page-actions { margin-top: 1.25rem; }
+    .timed-run {
+      display: inline-block;
+      padding: 0.55rem 1rem;
+      border: 2px solid var(--color-inverse);
+      border-radius: 999px;
+      color: var(--color-inverse);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .timed-run:hover { background: var(--color-inverse); color: var(--color-accent); }
+    .timed-run:focus-visible { outline: 3px solid var(--color-inverse); outline-offset: 3px; }
     main { width: min(92rem, 100%); margin: auto; padding: 2rem clamp(1rem, 4vw, 3rem) 5rem; overflow-wrap: anywhere; }
     .summary { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2rem; }
     .summary span { padding: 0.45rem 0.75rem; border: 1px solid transparent; border-radius: 999px; background: var(--color-surface); color: var(--color-text); }
@@ -90,6 +102,7 @@
   <header class="page-header">
     <h1 id="title">Storyboard</h1>
     <p id="subtitle"></p>
+    <p class="page-actions"><a class="timed-run" href="deck.html?rehearse">Start a timed run</a></p>
   </header>
   <main id="main">
     <div class="summary" id="summary"></div>
@@ -212,8 +225,8 @@
           <section class="error-panel" role="alert">
             <h2>${escapeHtml(title)}</h2>
             <p class="error-message">${escapeHtml(error && error.message ? error.message : error)}</p>
-            <p>Check the specification with <code>node scripts/validate.mjs path/to/spec.json</code>,
-              then rebuild with <code>node scripts/build.mjs path/to/spec.json --out dist/my-deck</code>.</p>
+            <p>Ask your assistant to check the specification and build the storyboard again.
+              The checks it runs are in <code>scripts/validate.mjs</code>.</p>
           </section>`;
       }
 

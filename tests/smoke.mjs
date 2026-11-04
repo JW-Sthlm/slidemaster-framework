@@ -5,8 +5,9 @@ import { tmpdir } from "node:os";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkSchema, validateDeck, validateFile } from "../scripts/validate.mjs";
-import { BuildError, assembleShells, buildShells, inlineTheme, serializeSpec } from "../scripts/build.mjs";
+import { BuildError, assembleShells, buildShells, inlineTheme, linkTimedRun, serializeSpec } from "../scripts/build.mjs";
 import { DOCS_DIR, DOCS_HEADERS, buildDocsOutputs, listFiles } from "../scripts/build-docs.mjs";
+import { PACKAGE_NAME, SKILL_FILES, buildSkillPackage, readStoredZip } from "../scripts/package-skill.mjs";
 import { appendRunToLog, compareRun, findRunTable, formatDelta, renderReport } from "../scripts/rehearsal-report.mjs";
 import { cases } from "./validator-cases.mjs";
 
@@ -16,6 +17,7 @@ const requiredFiles = [
   "CHANGELOG.md",
   "LICENSE",
   "SKILL.md",
+  "references/without-scripts.md",
   "stages/idea.md",
   "stages/voice-prompt.md",
   "stages/research.md",
@@ -32,12 +34,14 @@ const requiredFiles = [
   "scripts/validate.mjs",
   "scripts/build.mjs",
   "scripts/build-docs.mjs",
+  "scripts/package-skill.mjs",
   "scripts/rehearsal-report.mjs",
   "tests/render.mjs",
   "tests/validator-cases.mjs",
   "docs/index.html",
   "docs/storyboard.html",
-  "docs/schema/deck-spec.schema.json"
+  "docs/schema/deck-spec.schema.json",
+  `docs/${PACKAGE_NAME}`
 ];
 
 const results = { passed: 0, failed: [] };
@@ -103,8 +107,52 @@ await check("docs/ matches npm run build:docs", async () => {
   const actual = (await listFiles(DOCS_DIR)).map(file => relative(DOCS_DIR, file).split(sep).join("/")).sort();
   assert.deepEqual(actual, Object.keys(expected).sort(), "docs/ contains missing or extra files; run npm run build:docs");
   for (const [name, content] of Object.entries(expected)) {
+    if (Buffer.isBuffer(content)) {
+      assert.ok(content.equals(await readFile(join(DOCS_DIR, name))), `docs/${name} differs from the build output; run npm run build:docs`);
+      continue;
+    }
     const current = toLf(await readFile(join(DOCS_DIR, name), "utf8"));
     assert.ok(current === content, `docs/${name} differs from the build output; run npm run build:docs`);
+  }
+});
+
+// The skill package that Copilot Cowork users upload, and that other assistants can unpack into a skills folder
+const skillText = await readFile(join(root, "SKILL.md"), "utf8");
+await check("SKILL.md frontmatter works in Cowork, Copilot CLI and VS Code", () => {
+  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(skillText);
+  assert.ok(frontmatter, "SKILL.md has no YAML frontmatter");
+  const name = /^name: (\S+)$/m.exec(frontmatter[1])?.[1];
+  const description = /^description: "([^"]+)"$/m.exec(frontmatter[1])?.[1];
+  assert.equal(name, "slidemaster-framework", "the skill name must match the repository and package folder name");
+  assert.match(name, /^[a-z0-9]+(?:-[a-z0-9]+)*$/, "skill names are lowercase kebab-case");
+  assert.ok(description && description.length <= 1024, "the description is required and at most 1024 characters");
+  assert.match(description, /\bUse when\b/, "the description needs trigger phrases");
+});
+await check("skill package: SKILL.md at the root, Cowork file limits, and identical to the sources", async () => {
+  const entries = readStoredZip(await buildSkillPackage());
+  assert.deepEqual(entries.map(entry => entry.name), SKILL_FILES);
+  assert.equal(entries[0].name, "SKILL.md", "SKILL.md must be the first entry at the archive root");
+  const companions = entries.filter(entry => entry.name !== "SKILL.md");
+  assert.ok(companions.length <= 20, `${companions.length} companion files; Cowork allows 20`);
+  assert.ok(companions.reduce((sum, entry) => sum + entry.data.length, 0) <= 10 * 1024 * 1024, "companion files exceed 10 MB");
+  for (const { name, data } of entries) {
+    assert.match(name, /^[A-Za-z0-9_!-][A-Za-z0-9 _.!-]*(?:\/[A-Za-z0-9_!-][A-Za-z0-9 _.!-]*)*$/, `${name}: unsafe or hidden path`);
+    assert.ok(data.length <= 5 * 1024 * 1024, `${name} is larger than 5 MB`);
+    const source = toLf((await readFile(join(root, name), "utf8")).replace(/^\uFEFF/u, ""));
+    assert.ok(data.toString("utf8") === source, `${name} in the package differs from the repository file`);
+  }
+});
+await check("skill package: every file the skill refers to is included", async () => {
+  const guide = await readFile(join(root, "references/without-scripts.md"), "utf8");
+  const referenced = new Set();
+  for (const match of `${skillText}\n${guide}`.matchAll(/`((?:references|stages|schema|examples|templates|themes|scripts)\/[\w./-]*)`/g)) {
+    referenced.add(match[1]);
+  }
+  assert.ok(referenced.size >= 8, `found only ${referenced.size} references`);
+  for (const path of referenced) {
+    if (path.includes("THEME")) continue;
+    const covered = path.endsWith("/") ? SKILL_FILES.some(file => file.startsWith(path)) : SKILL_FILES.includes(path);
+    assert.ok(covered, `${path} is referenced but not in the skill package`);
   }
 });
 
@@ -157,6 +205,14 @@ await check("build: header links are escaped and restricted", async () => {
     buildShells(example, { headers: { deck: { title: "x", links: [{ label: "x", href: "javascript:alert(1)" }] } } }),
     BuildError
   );
+});
+await check("build: the storyboard's timed-run link opens the built deck in rehearse mode", async () => {
+  const { storyboard } = await buildShells(example);
+  assert.ok(storyboard.includes('<a class="timed-run" href="deck.html?rehearse">Start a timed run</a>'));
+  const docs = await buildShells(example, { deckFile: "index.html" });
+  assert.ok(docs.storyboard.includes('<a class="timed-run" href="index.html?rehearse">'));
+  assert.throws(() => linkTimedRun(storyboard, "javascript:alert(1)"), BuildError);
+  await assert.rejects(buildShells(example, { deckFile: "../deck.html" }), BuildError);
 });
 await check("build: invalid specifications are rejected with details", async () => {
   const spec = structuredClone(example);

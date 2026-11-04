@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.2.2 - 2026-11-04
+
+### Added
+
+- `docs/slidemaster-framework.zip`, a skill package for Copilot Cowork: `SKILL.md` at the root and the 16 companion files the skill uses, within Cowork's limit of 20 and with no hidden files. GitHub Pages serves it, `npm run build:docs` rebuilds it, and `npm run package` writes a copy to `dist/`. `scripts/package-skill.mjs` stores the files uncompressed with LF line endings and a fixed date, so every system builds the same bytes and CI can check for drift.
+- `references/without-scripts.md` gives assistants that cannot run Node.js the same checks, the same build and the same rehearsal comparison.
+- The storyboard has a **Start a timed run** link that opens the deck in rehearse mode, so nobody has to type `?rehearse`. The build points it at the deck file it writes: `deck.html`, or `index.html` in `docs/`.
+- Smoke tests check the skill frontmatter, the package contents and limits, and that every file the skill refers to is packaged. Render tests follow the timed-run link.
+
+### Changed
+
+- The live demo no longer shows commands, file formats or keyboard tricks. "Bring your own assistant" now opens the Get started chapter and names Copilot Cowork, GitHub Copilot CLI and GitHub Copilot in VS Code. "Your first deck" has four steps in the conversation, and "Rehearse against the clock" starts from the storyboard. Wording on the Write the talk first, What you get, Then shape the talk, Your words stay yours and closing slides follows the same line.
+- `SKILL.md` is assistant-first. The presenter never runs a command, installs software or edits a file. The skill names where it runs (Copilot Cowork, GitHub Copilot CLI, GitHub Copilot in VS Code, the GitHub Copilot app and other Agent Skills assistants) and falls back to `references/without-scripts.md` without Node.js. Its description now includes trigger phrases.
+- The README starts with setup for each assistant and moves the developer material under For developers.
+- The error panel in the deck and the storyboard asks the presenter to have the assistant check the specification and build again, instead of showing commands.
+- `stages/rehearsal-log.md` explains a timed run without commands.
+
 ## 1.2.1 - 2026-11-03
 
 ### Added

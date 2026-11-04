@@ -389,6 +389,16 @@ try {
     await dispose(context);
   });
 
+  await check("the storyboard's Start a timed run link opens the deck in rehearse mode", async () => {
+    const { context, page, log } = await open(exampleUrls.storyboard);
+    const link = page.getByRole("link", { name: "Start a timed run", exact: true });
+    assert.ok(await link.isVisible(), "the link is not visible");
+    await Promise.all([page.waitForURL(/\/deck\.html\?rehearse$/, { waitUntil: "domcontentloaded" }), link.click()]);
+    await page.locator(".rehearse-badge").waitFor({ state: "visible", timeout: 3000 });
+    assertClean(log, "timed run from the storyboard");
+    await dispose(context);
+  });
+
   const componentData = {
     statement: { text: "One clear statement." },
     "stat-grid": { items: [{ value: "42%", label: "of reviews end without a decision" }, { value: "3", label: "owners per decision" }] },
@@ -566,6 +576,16 @@ try {
     }
   });
   await check("docs storyboard renders cleanly", () => checkStoryboard(docs.storyboard, "docs storyboard", intro.slides.length));
+  await check("docs storyboard starts a timed run on the docs deck", async () => {
+    for (const viewport of viewports) {
+      const { context, page } = await open(docs.storyboard, { viewport });
+      const link = page.getByRole("link", { name: "Start a timed run", exact: true });
+      assert.equal(await link.getAttribute("href"), "index.html?rehearse");
+      const box = await link.boundingBox();
+      assert.ok(box && box.x >= 0 && box.x + box.width <= viewport.width, `the link leaves the viewport at ${viewport.width}px`);
+      await dispose(context);
+    }
+  });
 
   await check("rehearse mode at both sizes: no overflow, AA contrast, badge clear of the controls and links", async () => {
     for (const viewport of viewports) {

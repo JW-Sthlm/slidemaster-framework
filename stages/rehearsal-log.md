@@ -1,8 +1,8 @@
 # Rehearsal log
 
-Log every run. Turn what you learn into changes in the spec, rebuild and run again. The talk is ready when two runs in a row land within the slot.
+Log every run. Turn what you learn into changes in the talk, build it again and run again. The talk is ready when two runs in a row land within the slot.
 
-Time a run by opening the built deck with `?rehearse`. Press Shift+S when you finish. Then `node scripts/rehearsal-report.mjs <recording.json> --spec <deck-spec.json> --log rehearsal-log.md` prints slide and chapter times and adds the run to the table below, where you fill in the stumbles and the changes.
+To time a run, open the storyboard and select **Start a timed run**. Present out loud, then select **Save run** on the last slide and give the saved file to your assistant. It compares the run with the plan and adds a row to the table below. You fill in the stumbles and the changes.
 
 | Run | Date | Total | Slot | Over or under | Stumbles | Changes decided |
 |---|---|---|---|---|---|---|

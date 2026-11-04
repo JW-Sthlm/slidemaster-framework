@@ -3,11 +3,11 @@
     "title": "Slidemaster Framework",
     "subtitle": "From a raw idea to a rehearsed talk",
     "author": "Johan Wallquist",
-    "date": "2026-11-03",
+    "date": "2026-11-04",
     "language": "en",
     "theme": "clean",
     "durationMinutes": 15,
-    "version": "framework 1.2.1",
+    "version": "framework 1.2.2",
     "audience": "Presenters who prepare talks and workshops with an AI assistant",
     "centralClaim": "A talk gets better when the thinking happens before the slides, and an AI assistant can run that process with you.",
     "audienceAction": "Write the one thought your next talk should test, then let your assistant take it through the eight stages.",
@@ -15,7 +15,7 @@
       { "id": "why", "label": "Why it exists", "budgetMinutes": 4, "slides": ["easy-part", "wrong-place", "origin"] },
       { "id": "how", "label": "How it works", "budgetMinutes": 3, "slides": ["write-first", "what-you-get", "who-for"] },
       { "id": "stages", "label": "The eight stages", "budgetMinutes": 5, "slides": ["eight-stages", "find-the-thought", "shape-the-talk", "where-rounds-go", "your-words"] },
-      { "id": "start", "label": "Get started", "budgetMinutes": 3, "slides": ["first-deck", "rehearse", "your-assistant", "next-talk"] }
+      { "id": "start", "label": "Get started", "budgetMinutes": 3, "slides": ["your-assistant", "first-deck", "rehearse", "next-talk"] }
     ]
   },
   "slides": [
@@ -70,7 +70,7 @@
       },
       "notes": {
         "do": "Slow down. Tell it as a story.",
-        "say": "This autumn I prepared two keynotes with an AI assistant. Both started with me talking the idea through, unedited, and the assistant pulling out the claims, so we could research each one and find its strongest counterargument. Before any slides, I went through my old decks for things to reuse and worked out the minutes. Then came the outline. We rewrote it over and over, and both talks got better for every round. It worked. But the next talk always began with copying the scripts from the previous one, and the rules drifted a little each time. A fix stayed in the talk where I made it. So I put the method in one place. You're looking at it."
+        "say": "This autumn I prepared two keynotes with an AI assistant. Both started with me talking the idea through, unedited, and the assistant pulling out the claims, so we could research each one and find its strongest counterargument. Before any slides, I went through my old decks for things to reuse and worked out the minutes. Then came the outline. We rewrote it over and over, and both talks got better for every round. It worked. But the next talk always began with a copy of the last one, and the rules drifted a little each time. A fix stayed in the talk where I made it. So I put the method in one place. You're looking at it."
       }
     },
     {
@@ -82,24 +82,23 @@
       "energy": "high",
       "content": {
         "heading": "Write the talk first",
-        "lead": "Your talk goes into one JSON spec. The deck and the storyboard are built from it.",
+        "lead": "Your assistant writes the whole talk into one file. The deck and storyboard are built from it.",
         "component": "stat-grid",
         "data": {
           "items": [
-            { "value": "1", "label": "JSON spec you edit" },
-            { "value": "2", "label": "HTML files out" },
-            { "value": "0", "label": "runtime dependencies" }
+            { "value": "1", "label": "file holds the whole talk" },
+            { "value": "2", "label": "files to present and practice with" },
+            { "value": "0", "label": "slides edited by hand" }
           ]
         },
-        "footer": "This deck is built from examples/framework-introduction.json."
+        "footer": "This deck was built the same way."
       },
       "notes": {
-        "do": "Point at the footer.",
-        "say": "Write the talk first. Every slide goes into one JSON file, along with its timing and the words you'll say. The sources behind the facts go in there too. The validator checks that spec before the build turns it into two HTML files: the deck and a storyboard for practice. You can mail them or open them on a plane. No server, nothing to install. When something needs changing, edit the spec and build again. You never edit the slides by hand, so they can't drift from the spec. This deck came from a file in the repository. Exactly that way."
+        "do": "Point at the zero.",
+        "say": "Write the talk first. Your assistant keeps the whole talk in one file, every slide with its timing and the words you'll say. The sources behind the facts go in there too. It checks that file before anything gets built. Then it builds two things from it: the deck you present and a storyboard to practice with. Both open in any browser. You can mail them or open them on a plane. If something needs to change, you just say so, and the assistant changes the file and builds both again. Nobody touches a slide by hand, so the slides never drift from the script. This deck was built exactly that way."
       },
       "sources": [
-        { "label": "README: build and validation", "url": "https://github.com/JW-Sthlm/slidemaster-framework#readme" },
-        { "label": "package.json: no runtime dependencies", "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/package.json" }
+        { "label": "README: how it works", "url": "https://github.com/JW-Sthlm/slidemaster-framework#how-it-works" }
       ]
     },
     {
@@ -114,7 +113,7 @@
         "component": "card-grid",
         "data": {
           "items": [
-            { "title": "Validator", "text": "Catches broken timing before you build" },
+            { "title": "Checks", "text": "Broken timing caught before the build" },
             { "title": "Deck", "text": "Keyboard control and a rehearse mode" },
             { "title": "Storyboard", "text": "Script and a running clock" },
             { "title": "Stage templates", "text": "One file for every stage" }
@@ -123,7 +122,7 @@
       },
       "notes": {
         "do": "Walk the cards left to right.",
-        "say": "There are four parts, and the validator comes first. It checks the spec before you build, and stops you if there are duplicate slides or the timings don't add up. An em dash or a local file path will stop it too. (Yes, the em dash. I have opinions.) The deck runs in any browser and works from the keyboard. There's a rehearse mode I'll show you. Then you've got the storyboard, with every slide and the full script alongside a running clock for practice. The stage templates are where you do the thinking: a file for each stage, before you make slides."
+        "say": "There are four parts, and the checks come first. Before anything is built, the assistant checks the talk and stops if a slide appears twice or the minutes don't add up. An em dash will stop it too. (Yes, the em dash. I have opinions.) The deck runs in any browser and works from the keyboard. There's a rehearse mode I'll show you. Then you've got the storyboard, with every slide and the full script alongside a running clock for practice. The stage templates are where you do the thinking: a file for each stage, before you make slides."
       },
       "sources": [
         { "label": "README: what is included", "url": "https://github.com/JW-Sthlm/slidemaster-framework#what-is-included" }
@@ -216,14 +215,14 @@
           "items": [
             { "title": "Planning", "text": "Audience, goal and minutes that add up" },
             { "title": "Outline", "text": "The full script, round after round" },
-            { "title": "Deck", "text": "Built from the spec, slide by slide" },
+            { "title": "Deck", "text": "Built from the outline, slide by slide" },
             { "title": "Rehearsal", "text": "Against the clock, until it sticks" }
           ]
         }
       },
       "notes": {
         "do": "Land on Rehearsal.",
-        "say": "Who's in the room, what should they do afterwards, and how many minutes do you really have? That's where planning starts. Divide the minutes into chapters and let the validator check that they add up. Then write the whole talk in the spec, with timing and a script for every slide, and keep rewriting the outline until it works. Build the deck from that. You'll polish it slide by slide, then practice against the clock until two runs in a row fit inside the slot. And when the deck looks done, you'll want to stop. Keep going."
+        "say": "Who's in the room, what should they do afterwards, and how many minutes do you really have? That's where planning starts. Divide the minutes into chapters, and the assistant checks that they add up. Then write the whole talk as an outline, with timing and a script for every slide, and keep rewriting it until it works. The deck is built from that. You'll polish it slide by slide, then practice against the clock until two runs in a row fit inside the slot. And when the deck looks done, you'll want to stop. Keep going."
       },
       "sources": [
         { "label": "SKILL.md: stages 5 to 8", "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md" }
@@ -268,7 +267,7 @@
         "component": "quote",
         "data": {
           "text": "Never rewrite the presenter's idea or voice prompt.",
-          "attribution": "SKILL.md, guardrails"
+          "attribution": "Slidemaster skill, guardrails"
         }
       },
       "notes": {
@@ -280,6 +279,29 @@
       ]
     },
     {
+      "id": "your-assistant",
+      "type": "standard",
+      "label": "Your assistant",
+      "act": "Get started",
+      "timing": "45s",
+      "energy": "steady",
+      "content": {
+        "heading": "Bring your own assistant",
+        "lead": "Copilot Cowork, GitHub Copilot CLI or GitHub Copilot in VS Code. Use the one you already have.",
+        "component": "statement",
+        "data": { "text": "Add the skill once. It runs the stages with you and stops at every gate for your call." }
+      },
+      "notes": {
+        "do": "Name the assistant you use. Don't install anything live.",
+        "say": "You don't run any of this by hand. You add one skill to the assistant you already use, and you only do that once. In Cowork you upload it. In Copilot CLI or VS Code you ask Copilot to install it from the repository. After that it's a conversation. The assistant works out where your talk stands and runs the next stage with you, and at every gate it stops and asks before it goes on. I use Copilot CLI myself. The skill is the same everywhere."
+      },
+      "sources": [
+        { "label": "README: use it with your assistant", "url": "https://github.com/JW-Sthlm/slidemaster-framework#use-it-with-your-assistant" },
+        { "label": "Microsoft Learn: upload a skill to Copilot Cowork", "url": "https://learn.microsoft.com/copilot/cowork/cowork-customize#upload-a-skill" },
+        { "label": "VS Code docs: Agent Skills", "url": "https://code.visualstudio.com/docs/agent-customization/agent-skills" }
+      ]
+    },
+    {
       "id": "first-deck",
       "type": "standard",
       "label": "First deck",
@@ -288,23 +310,23 @@
       "energy": "steady",
       "content": {
         "heading": "Your first deck",
-        "lead": "Four steps. You need Node.js 22 or later and nothing else.",
+        "lead": "Four steps, all in the conversation with your assistant.",
         "component": "action-list",
         "data": {
           "items": [
-            "Copy the example spec to talk.json",
-            "node scripts/validate.mjs talk.json",
-            "node scripts/build.mjs talk.json --out dist/talk",
-            "Open deck.html and storyboard.html in dist/talk"
+            "Add the Slidemaster skill to your assistant",
+            "Say: help me prepare my next talk",
+            "Answer its questions, one stage at a time",
+            "Open the deck and the storyboard it builds"
           ]
         }
       },
       "notes": {
-        "do": "Show the commands. Don't type them live.",
-        "say": "You can try this in five minutes. You'll need Node 22 or later on your machine, then clone the repository. There's nothing else to install. Copy the example spec and make it yours, then run the validator, which tells you exactly what's wrong and where if something fails. Build into a folder and open the two files in a browser. That's the loop from then on: change the spec and build again. Leave the HTML alone."
+        "do": "Read the second step the way you'd say it to your assistant.",
+        "say": "Four steps, and all of them happen in the conversation. Add the skill. Then say: help me prepare my next talk. The assistant asks what you've got so far and starts at the right stage, and you answer one question at a time, in your own words. When you've approved the outline, it builds the deck and the storyboard and checks every slide before you see them. Then you open them in your browser and start rehearsing."
       },
       "sources": [
-        { "label": "README: quick start", "url": "https://github.com/JW-Sthlm/slidemaster-framework#quick-start" }
+        { "label": "README: use it with your assistant", "url": "https://github.com/JW-Sthlm/slidemaster-framework#use-it-with-your-assistant" }
       ]
     },
     {
@@ -316,39 +338,18 @@
       "energy": "steady",
       "content": {
         "heading": "Rehearse against the clock",
-        "lead": "Each run is saved as a file you can compare with your plan.",
+        "lead": "Your assistant compares every run with your plan.",
         "component": "process",
         "data": {
-          "steps": ["Open the deck with ?rehearse", "Present, then press Shift+S", "Run the rehearsal report"]
+          "steps": ["Start a timed run from the storyboard", "Present, then save the run", "Hand the run to your assistant"]
         }
       },
       "notes": {
         "do": "Point out that only you see the timer.",
-        "say": "Rehearsal is the stage everyone skips. Let me show you what you'd be skipping. Add question mark rehearse to the end of the deck's address and you get a small timer, only for you. Present the whole talk, then press Shift and S when you're done to save the run as a file. The rehearsal report compares every chapter and every slide against your plan, so you've got something concrete to use when you decide where to cut. Then do it again. Two runs in a row inside the slot, and you're done."
+        "say": "Rehearsal is the stage everyone skips. Let me show you what you'd be skipping. Open the storyboard and select Start a timed run, and the deck gets a small timer that only you can see. Present the whole talk out loud. On the last slide you save the run and hand it to your assistant, and it compares every chapter and every slide with your plan. Now you've got something concrete when you decide where to cut. Then do it again. Two runs in a row inside the slot, and you're done."
       },
       "sources": [
-        { "label": "README: rehearsal mode", "url": "https://github.com/JW-Sthlm/slidemaster-framework#rehearsal-mode" }
-      ]
-    },
-    {
-      "id": "your-assistant",
-      "type": "standard",
-      "label": "Your assistant",
-      "act": "Get started",
-      "timing": "45s",
-      "energy": "steady",
-      "content": {
-        "heading": "Bring your own assistant",
-        "lead": "Copilot CLI works well. So does any assistant that can read files and run commands.",
-        "component": "statement",
-        "data": { "text": "Give it SKILL.md. It runs the stages with you and stops at every gate for your call." }
-      },
-      "notes": {
-        "do": "Show SKILL.md in the repository.",
-        "say": "You don't have to run every stage by hand. There's a skill file in the repository, SKILL.md, that you can point your assistant at and say: help me with my next talk. It works out where you are in the process and runs the next stage. At every gate it stops and asks you before it goes on. I use Copilot CLI. Anything that can read files and run commands will do."
-      },
-      "sources": [
-        { "label": "SKILL.md", "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md" }
+        { "label": "README: rehearse against the clock", "url": "https://github.com/JW-Sthlm/slidemaster-framework#rehearse-against-the-clock" }
       ]
     },
     {
@@ -365,14 +366,14 @@
           "items": [
             "Write the one thought you want to test",
             "Talk it through for five minutes, unedited",
-            "Hand both to your assistant with SKILL.md"
+            "Hand both to your assistant with the skill"
           ]
         },
         "footer": "github.com/JW-Sthlm/slidemaster-framework. Built by Johan Wallquist, MIT licensed."
       },
       "notes": {
         "do": "End on the first action. Leave the slide up.",
-        "say": "So here's my ask. Before you open a single slide for your next talk, write one sentence with the thought you want to test. Talk it through for five minutes and keep the transcript, then give both to your assistant together with the skill file. The repository is open and MIT licensed, so take what works for you. And if you build something better, tell me. Thanks."
+        "say": "So here's my ask. Before you open a single slide for your next talk, write one sentence with the thought you want to test. Talk it through for five minutes and keep the transcript. Then give both to your assistant, with the skill added, and say: help me prepare my next talk. The repository is open and MIT licensed, so take what works for you. And if you build something better, tell me. Thanks."
       },
       "sources": [
         { "label": "GitHub: JW-Sthlm/slidemaster-framework", "url": "https://github.com/JW-Sthlm/slidemaster-framework" }

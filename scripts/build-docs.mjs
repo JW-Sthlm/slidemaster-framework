@@ -2,6 +2,7 @@ import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import { ROOT, buildShells, readSpec } from "./build.mjs";
+import { PACKAGE_NAME, buildSkillPackage } from "./package-skill.mjs";
 
 export const DOCS_DIR = join(ROOT, "docs");
 const REPOSITORY = "https://github.com/JW-Sthlm/slidemaster-framework";
@@ -18,15 +19,16 @@ export const DOCS_HEADERS = {
   }
 };
 
-// Everything GitHub Pages serves from docs/, keyed by path relative to docs/.
+// Everything GitHub Pages serves from docs/, keyed by path relative to docs/. The skill package is a Buffer.
 export async function buildDocsOutputs() {
   const spec = await readSpec(join(ROOT, "examples", "framework-introduction.json"));
-  const shells = await buildShells(spec, { headers: DOCS_HEADERS });
+  const shells = await buildShells(spec, { headers: DOCS_HEADERS, deckFile: "index.html" });
   const schema = (await readFile(join(ROOT, "schema", "deck-spec.schema.json"), "utf8")).replace(/\r\n?/g, "\n");
   return {
     "index.html": shells.deck,
     "storyboard.html": shells.storyboard,
-    "schema/deck-spec.schema.json": schema
+    "schema/deck-spec.schema.json": schema,
+    [PACKAGE_NAME]: await buildSkillPackage()
   };
 }
 

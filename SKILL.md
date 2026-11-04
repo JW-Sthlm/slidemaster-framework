@@ -1,13 +1,38 @@
 ---
 name: slidemaster-framework
-description: "Take a talk from a raw idea to a rehearsed presentation in eight stages: idea, voice prompt, research, context, planning, outline, deck and rehearsal. Builds narrative-first HTML decks and storyboards from a portable JSON deck specification."
+description: "Helps a presenter take a talk from a raw idea to a rehearsed presentation in eight stages: idea, voice prompt, research, context, planning, outline, deck and rehearsal. Use when someone wants to prepare, write, build, review or rehearse a talk, keynote, workshop or presentation, or says 'help me prepare my next talk'. Builds a narrative-first deck and a storyboard with the full script and timing, and compares timed rehearsal runs with the plan."
 ---
 
 # Slidemaster Framework
 
-Use this skill when someone wants to create, rebuild, audit or rehearse a presentation.
+Use this skill when someone wants to prepare, create, rebuild, audit or rehearse a presentation.
 
-The presenter owns the idea, the claims and the final words. You capture, research, plan, build, check and help rehearse. This works in Copilot CLI, Copilot Cowork, Microsoft Scout or any runtime with file and command access, ideally with a browser too, so map each step to the tools you have.
+The presenter owns the idea, the claims and the final words. You capture, research, plan, build, check and help rehearse.
+
+## Work in the conversation
+
+The presenter talks to you. You do all the technical work.
+
+- Create, read and update every file yourself: the stage files, the deck specification and the built deck.
+- Never ask the presenter to run a command, install anything, or edit JSON, HTML or Markdown by hand. When something needs to change, they tell you and you change it.
+- Talk about the talk, not the tooling. Say "the outline" or "the deck" rather than naming file formats, scripts or paths, unless the presenter asks.
+- Show drafts as readable text: headings, timing and what the presenter will say. Never paste the raw specification into the conversation.
+- Keep each talk in its own folder, named after the talk, with the stage files, the specification and the built files together.
+- When a deck is ready, hand over the deck and the storyboard together, in the same folder, and tell the presenter to open the deck in their browser.
+
+## Where this runs
+
+The stages are the same everywhere. Only the tools differ.
+
+| Assistant | Where the talk lives | Checks, build and rehearsal report |
+|---|---|---|
+| GitHub Copilot CLI, GitHub Copilot in VS Code, the GitHub Copilot app | A folder in the presenter's workspace | Run the scripts in `scripts/` with Node.js 22 or later |
+| Copilot Cowork | The conversation's output folder in OneDrive | Run the scripts when Node.js is available, otherwise follow `references/without-scripts.md` |
+| Any other assistant that supports Agent Skills | Its working folder | The same: the scripts, or `references/without-scripts.md` |
+
+Paths in this skill are relative to the folder that holds this `SKILL.md`. If you cannot run Node.js, use `references/without-scripts.md` for the same checks, the build and the rehearsal comparison. Never send the presenter off to install Node.js or anything else.
+
+In Copilot Cowork, offer both built files for download. If the preview does not show the slides, the presenter downloads both files to one folder and opens the deck in a browser.
 
 ## The eight stages
 
@@ -18,15 +43,15 @@ The presenter owns the idea, the claims and the final words. You capture, resear
 | 3 | Research | Facts and counterarguments | `research.md` | Every core claim sourced or flagged, each with its strongest counterargument |
 | 4 | Context | Your own decks and notes | `context.md` | Reuse list agreed |
 | 5 | Planning | Audience, goal and time | `plan.md` and the spec's `meta` | Chapter budgets add up to the talk time |
-| 6 | Outline ↻ | Most iterations | Spec slides with timing and notes, versioned | The validator passes and the presenter approves a version |
-| 7 | Deck ↻ | Slide by slide | `scripts/build.mjs` output | Visual review passes and the presenter approves each chapter |
+| 6 | Outline ↻ | Most iterations | Spec slides with timing and notes, versioned | The checks pass and the presenter approves a version |
+| 7 | Deck ↻ | Slide by slide | The deck and the storyboard | Visual review passes and the presenter approves each chapter |
 | 8 | Rehearsal | Until it sticks | `rehearsal-log.md` | Two runs in a row land within the slot |
 
-Templates for every artifact live in `stages/`. Copy them into the talk's own folder.
+Templates for every artifact live in `stages/`. Copy them into the talk's own folder and fill them in from the conversation.
 
 Stages run in order, and any stage can send work back: research can change the plan, and a rehearsal can change the outline. Outline and Deck are loops, so expect many rounds and never cap the rounds the presenter drives.
 
-Start by finding where the talk stands. If stage files exist, read them and continue from the first open gate.
+Start by finding where the talk stands. If stage files exist, read them and continue from the first open gate. If nothing exists yet, start with the idea.
 
 ### 1. Idea
 
@@ -69,13 +94,13 @@ A useful default arc:
 4. Explain what the proof means for the audience.
 5. Close with the concrete action.
 
-Validate every version:
+Check every version yourself, before the presenter sees it:
 
 ```bash
 node scripts/validate.mjs path/to/deck-spec.json
 ```
 
-Fix errors before going further. Treat warnings about density, long headings or timing against the slot as editorial prompts: cut content or move detail into the notes. Review each version with the presenter and record it in `meta.version`, for example `outline v0.3`. Keep earlier versions so any round can be rolled back.
+Without Node.js, apply the checks in `references/without-scripts.md`. Fix errors before going further. Treat warnings about density, long headings or timing against the slot as editorial prompts: raise them with the presenter, then cut content or move detail into the notes. Review each version with the presenter and record it in `meta.version`, for example `outline v0.3`. Keep earlier versions so any round can be rolled back.
 
 Before the presenter approves a version, check:
 
@@ -90,25 +115,33 @@ Before the presenter approves a version, check:
 Build the deck and the storyboard from the approved spec:
 
 ```bash
-node scripts/build.mjs path/to/deck-spec.json --out path/to/output
+node scripts/build.mjs path/to/deck-spec.json --out path/to/talk-folder
 ```
 
-The build validates the spec, embeds it safely and inlines the theme, so the output works offline from any folder. Never hand-edit the generated HTML; change the spec and rebuild instead.
+Without Node.js, build both files as described in `references/without-scripts.md`. The build checks the spec, embeds it safely and inlines the theme, so the output works offline from any folder. Never hand-edit the built HTML; change the spec and build again.
 
-Review visually after every build. With browser automation, check every slide at presentation size for clipped or overflowing content, readable type, deliberate title wrapping, consistent spacing, contrast, keyboard navigation and correct notes. Without it, open the files and run through the same list. Then polish slide by slide, or chapter by chapter, with the presenter. Keep a copy of each reviewed draft.
+Review visually after every build. With browser automation, check every slide at presentation size for clipped or overflowing content, readable type, deliberate title wrapping, consistent spacing, contrast, keyboard navigation and correct notes. Without it, walk through the same list with the presenter. Then polish slide by slide, or chapter by chapter, with the presenter. Keep a copy of each reviewed draft.
 
 ### 8. Rehearsal
 
-Rehearse with the storyboard. It shows every slide with its notes, its timing and the running clock. To time a run, open the built deck with `?rehearse` and save the recording with Shift+S, then run `node scripts/rehearsal-report.mjs <recording.json> --spec <deck-spec.json> --log rehearsal-log.md` to compare it with the plan and append it to the log. After each run, log the date, total time against the slot, chapter times against their budgets, stumbles and the changes decided in `rehearsal-log.md`. Turn the log into cuts and shorter notes, update the spec, rebuild and run again.
+Rehearse with the storyboard. It shows every slide with its notes, its timing and the running clock.
+
+To time a run, the presenter opens the storyboard and selects **Start a timed run**. The deck opens with a small timer that only the presenter sees. They present out loud, then select **Save run** on the last slide (Shift+S also works). The browser saves a file named `rehearsal-YYYYMMDD-HHMM.json`, usually in Downloads. Ask the presenter to give you that file, then compare it with the plan:
+
+```bash
+node scripts/rehearsal-report.mjs path/to/rehearsal.json --spec path/to/deck-spec.json --log path/to/rehearsal-log.md
+```
+
+Without Node.js, compare the run as described in `references/without-scripts.md`. Tell the presenter the result in plain words: the total against the slot, the chapters that ran over and the slides that took longest against their timing. Log the stumbles and the changes they decide in `rehearsal-log.md`, update the spec, rebuild and run again.
 
 The talk is ready when two runs in a row land within the slot and the presenter says it sticks.
 
 ## Deliver
 
-Report:
+Report in plain language:
 
-- files created or changed
-- validation and review results
+- what changed in the talk, and where the presenter can open it
+- what the checks and the review found
 - assumptions and open questions
 - the presenter's next action
 
@@ -116,6 +149,7 @@ Report:
 
 - Never invent facts, quotes, people or metrics. A number on a slide is sourced, labelled as an example, or cut.
 - Never rewrite the presenter's idea or voice prompt.
+- Never ask the presenter to run commands, install software or edit files by hand.
 - Keep private paths, credentials, internal links and restricted material out of shared files.
 - Do not embed third-party branding unless the presenter supplied it and has the right to use it.
 - Prefer system fonts and local assets so the output stays portable.

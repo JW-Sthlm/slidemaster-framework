@@ -1,12 +1,13 @@
 {
   "name": "slidemaster-framework",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Portable HTML presentation framework with a JSON deck specification, a build step, and validation.",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
     "build:docs": "node scripts/build-docs.mjs",
+    "package": "node scripts/package-skill.mjs",
     "validate": "node scripts/validate.mjs examples/deck-spec.example.json && node scripts/validate.mjs examples/framework-introduction.json",
     "test": "node tests/smoke.mjs",
     "test:render": "node tests/render.mjs"

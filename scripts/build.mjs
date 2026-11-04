@@ -8,6 +8,8 @@ export const SHELLS = ["deck", "storyboard"];
 const SPEC_BLOCK = /(<script type="application\/json" id="deck-spec">)[\s\S]*?(<\/script>)/;
 const THEME_LINK = /<link rel="stylesheet" href="\.\.\/themes\/[a-z0-9-]+\.css">/;
 const HEADER_SLOT = /[ \t]*<!-- slidemaster:header -->\n/;
+const TIMED_RUN_LINK = /(<a class="timed-run" href=")deck\.html(\?rehearse">)/;
+const LOCAL_HTML_FILE = /^[\w.-]+\.html$/;
 const USAGE = "Usage: node scripts/build.mjs <spec.json> --out <dir>";
 
 export class BuildError extends Error {
@@ -46,7 +48,7 @@ export function inlineTheme(html, css, theme) {
 
 function headerHtml(header) {
   const links = (header.links ?? []).map(link => {
-    if (!/^(?:https:\/\/\S+|[\w.-]+\.html)$/.test(link.href)) {
+    if (!/^https:\/\/\S+$/.test(link.href) && !LOCAL_HTML_FILE.test(link.href)) {
       throw new BuildError(`header link "${link.href}" must be an https:// URL or a local .html file`);
     }
     return `      <a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`;
@@ -80,8 +82,15 @@ async function readTheme(root, theme) {
   }
 }
 
+// The storyboard's "Start a timed run" link opens the deck in rehearse mode, so it needs the deck's file name.
+export function linkTimedRun(html, deckFile) {
+  if (!LOCAL_HTML_FILE.test(deckFile)) throw new BuildError(`deck file "${deckFile}" must be a local .html file name`);
+  if (!TIMED_RUN_LINK.test(html)) throw new BuildError('the storyboard template has no <a class="timed-run" href="deck.html?rehearse"> link');
+  return html.replace(TIMED_RUN_LINK, (match, open, close) => `${open}${escapeHtml(deckFile)}${close}`);
+}
+
 // Fills both templates without validating. Use buildShells unless you need to test the shells with invalid input.
-export async function assembleShells(spec, { root = ROOT, headers = {} } = {}) {
+export async function assembleShells(spec, { root = ROOT, headers = {}, deckFile = "deck.html" } = {}) {
   const css = await readTheme(root, spec?.meta?.theme);
   const output = {};
   for (const shell of SHELLS) {
@@ -90,6 +99,7 @@ export async function assembleShells(spec, { root = ROOT, headers = {} } = {}) {
     html = embedSpec(html, spec);
     html = setDocumentMeta(html, spec, shell);
     html = html.replace(HEADER_SLOT, () => (headers[shell] ? headerHtml(headers[shell]) : ""));
+    if (shell === "storyboard") html = linkTimedRun(html, deckFile);
     output[shell] = html;
   }
   return output;
@@ -126,7 +136,7 @@ export async function buildFiles(specPath, outDir, { fileNames = { deck: "deck.h
   if ([root, join(root, "templates"), join(root, "themes")].some(dir => samePath(target, dir))) {
     throw new BuildError(`refusing to write build output into ${outDir}`);
   }
-  const result = await buildShells(await readSpec(specPath), options);
+  const result = await buildShells(await readSpec(specPath), { ...options, deckFile: fileNames.deck });
   await mkdir(target, { recursive: true });
   const files = [];
   for (const shell of SHELLS) {

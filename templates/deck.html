@@ -414,8 +414,8 @@
           <section class="error-panel" role="alert">
             <h1>${escapeHtml(title)}</h1>
             <p class="error-message">${escapeHtml(error && error.message ? error.message : error)}</p>
-            <p>Check the specification with <code>node scripts/validate.mjs path/to/spec.json</code>,
-              then rebuild the deck with <code>node scripts/build.mjs path/to/spec.json --out dist/my-deck</code>.</p>
+            <p>Ask your assistant to check the specification and build the deck again.
+              The checks it runs are in <code>scripts/validate.mjs</code>.</p>
           </section>`;
       }
 
