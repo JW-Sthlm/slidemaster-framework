@@ -145,14 +145,14 @@
     "title": "Slidemaster Framework",
     "subtitle": "From a raw idea to a rehearsed talk",
     "author": "Johan Wallquist",
-    "date": "2026-11-04",
+    "date": "2026-11-07",
     "language": "en",
     "theme": "clean",
     "durationMinutes": 15,
-    "version": "framework 1.2.2",
+    "version": "framework 1.3.0",
     "audience": "Presenters who prepare talks and workshops with an AI assistant",
     "centralClaim": "A talk gets better when the thinking happens before the slides, and an AI assistant can run that process with you.",
-    "audienceAction": "Write the one thought your next talk should test, then let your assistant take it through the eight stages.",
+    "audienceAction": "Talk about the idea for your next talk, out loud and unedited, then let your assistant take it through the six stages.",
     "chapters": [
       {
         "id": "why",
@@ -176,10 +176,10 @@
       },
       {
         "id": "stages",
-        "label": "The eight stages",
+        "label": "The six stages",
         "budgetMinutes": 5,
         "slides": [
-          "eight-stages",
+          "six-stages",
           "find-the-thought",
           "shape-the-talk",
           "where-rounds-go",
@@ -257,7 +257,7 @@
       },
       "notes": {
         "do": "Slow down. Tell it as a story.",
-        "say": "This autumn I prepared two keynotes with an AI assistant. Both started with me talking the idea through, unedited, and the assistant pulling out the claims, so we could research each one and find its strongest counterargument. Before any slides, I went through my old decks for things to reuse and worked out the minutes. Then came the outline. We rewrote it over and over, and both talks got better for every round. It worked. But the next talk always began with a copy of the last one, and the rules drifted a little each time. A fix stayed in the talk where I made it. So I put the method in one place. You're looking at it."
+        "say": "This autumn I prepared two keynotes with an AI assistant. Both started with me talking about the idea, out loud and unedited, and the assistant pulling out the claims, so we could research each one and find its strongest counterargument. Before any slides, I went through my old decks for things to reuse and worked out the minutes. Then came the outline. We rewrote it over and over, and both talks got better for every round. It worked. But the next talk always began with a copy of the last one, and the rules drifted a little each time. A fix stayed in the talk where I made it. So I put the method in one place. You're looking at it."
       }
     },
     {
@@ -371,22 +371,20 @@
       }
     },
     {
-      "id": "eight-stages",
+      "id": "six-stages",
       "type": "standard",
-      "label": "Eight stages",
-      "act": "The eight stages",
+      "label": "Six stages",
+      "act": "The six stages",
       "timing": "1m",
       "energy": "high",
       "content": {
-        "heading": "Eight stages",
+        "heading": "Six stages",
         "lead": "From idea to rehearsal. Outline and Deck are loops.",
         "component": "process",
         "data": {
           "steps": [
             "Idea",
-            "Voice prompt",
             "Research",
-            "Context",
             "Planning",
             "Outline",
             "Deck",
@@ -396,12 +394,12 @@
       },
       "notes": {
         "do": "Trace the top row, then the bottom row. Stop on Outline and Deck.",
-        "say": "Eight stages. The first four help you find the thought. You start with the idea and a voice prompt, then do the research and look at your context. After that you work on the talk itself: you plan the minutes, write the outline, build the deck and rehearse it. Each stage leaves a file behind, with a gate that tells you when you've done enough to move on. But Outline and Deck are loops. You'll go through them many times, and most of your rounds happen there. That's fine. The rounds are the work."
+        "say": "Six stages. The first two are about finding the thought: you talk about the idea, and the research checks it. The other four shape the talk. You plan the minutes, write the outline, build the deck and rehearse it. Each stage leaves a file behind, with a gate that tells you when you've done enough to move on. Outline and Deck are loops, though. You'll go through them many times, and most of your rounds happen there. That's fine. The rounds are the work."
       },
       "sources": [
         {
-          "label": "SKILL.md: the eight stages",
-          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md"
+          "label": "SKILL.md: the six stages",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md#the-six-stages"
         }
       ]
     },
@@ -409,7 +407,7 @@
       "id": "find-the-thought",
       "type": "standard",
       "label": "Find the thought",
-      "act": "The eight stages",
+      "act": "The six stages",
       "timing": "1m",
       "energy": "steady",
       "content": {
@@ -418,32 +416,32 @@
         "data": {
           "items": [
             {
-              "title": "Idea",
-              "text": "A thought worth testing, in your words"
+              "title": "Talk about the idea",
+              "text": "Out loud and unedited. Not the whole talk."
             },
             {
-              "title": "Voice prompt",
-              "text": "Talk it through. Save it unedited."
+              "title": "Say who it's for",
+              "text": "In the same take: the audience, the event, your minutes"
             },
             {
-              "title": "Research",
+              "title": "Research it",
               "text": "Facts and the strongest pushback"
             },
             {
-              "title": "Context",
-              "text": "Your old decks and notes, reused"
+              "title": "Reuse what you have",
+              "text": "Your old decks and notes"
             }
           ]
         }
       },
       "notes": {
         "do": "Spend the time on the voice prompt.",
-        "say": "Start with one sentence you believe and want to test. Then talk for five or ten minutes, out loud, without editing yourself. I just dictate in Copilot CLI. The assistant keeps the transcript word for word and pulls out the claims and numbers to check, but it doesn't get to improve what I said. That part matters. For every claim, the research needs the facts and the strongest counterargument you can find. Then look at your own old decks and notes for context. You've probably said half of this before. Maybe better than you remember."
+        "say": "It starts with you talking. Five or ten minutes, out loud, about the idea. Not the whole talk, nobody's asking for chapters yet. Just the thought you want to test and why it matters to you. In the same take you say who'll be in the room, what kind of event it is and how many minutes you've got. I just dictate in Copilot CLI. The assistant keeps the transcript word for word and pulls out the claims to check, but it doesn't get to improve what I said. Then comes the research: the facts and the strongest counterargument for every claim, plus your own old decks and notes. You've probably said half of this before. Maybe better than you remember."
       },
       "sources": [
         {
-          "label": "SKILL.md: stages 1 to 4",
-          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md"
+          "label": "SKILL.md: stages 1 and 2",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md#1-idea"
         },
         {
           "label": "Stage templates",
@@ -455,7 +453,7 @@
       "id": "shape-the-talk",
       "type": "standard",
       "label": "Shape the talk",
-      "act": "The eight stages",
+      "act": "The six stages",
       "timing": "1m",
       "energy": "steady",
       "content": {
@@ -465,7 +463,7 @@
           "items": [
             {
               "title": "Planning",
-              "text": "Audience, goal and minutes that add up"
+              "text": "Goal, chapters and minutes that add up"
             },
             {
               "title": "Outline",
@@ -484,12 +482,12 @@
       },
       "notes": {
         "do": "Land on Rehearsal.",
-        "say": "Who's in the room, what should they do afterwards, and how many minutes do you really have? That's where planning starts. Divide the minutes into chapters, and the assistant checks that they add up. Then write the whole talk as an outline, with timing and a script for every slide, and keep rewriting it until it works. The deck is built from that. You'll polish it slide by slide, then practice against the clock until two runs in a row fit inside the slot. And when the deck looks done, you'll want to stop. Keep going."
+        "say": "Planning starts from what you said about the room. What should people do afterwards? How many minutes do you really have? Split them into chapters, and the assistant checks that they add up. Then write the whole talk as an outline, with timing and a script for every slide, and keep rewriting it until it works. The deck is built from that. You'll polish it slide by slide, then practice against the clock until two runs in a row fit inside the slot. And when the deck looks done, you'll want to stop. Keep going."
       },
       "sources": [
         {
-          "label": "SKILL.md: stages 5 to 8",
-          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md"
+          "label": "SKILL.md: stages 3 to 6",
+          "url": "https://github.com/JW-Sthlm/slidemaster-framework/blob/main/SKILL.md#3-planning"
         }
       ]
     },
@@ -497,7 +495,7 @@
       "id": "where-rounds-go",
       "type": "standard",
       "label": "Where the rounds go",
-      "act": "The eight stages",
+      "act": "The six stages",
       "timing": "1m",
       "energy": "high",
       "content": {
@@ -535,7 +533,7 @@
       "id": "your-words",
       "type": "contrast",
       "label": "Your words",
-      "act": "The eight stages",
+      "act": "The six stages",
       "timing": "1m",
       "energy": "calm",
       "content": {
@@ -606,14 +604,14 @@
           "items": [
             "Add the Slidemaster skill to your assistant",
             "Say: help me prepare my next talk",
-            "Answer its questions, one stage at a time",
+            "Talk about your idea, then answer its questions",
             "Open the deck and the storyboard it builds"
           ]
         }
       },
       "notes": {
         "do": "Read the second step the way you'd say it to your assistant.",
-        "say": "Four steps, and all of them happen in the conversation. Add the skill. Then say: help me prepare my next talk. The assistant asks what you've got so far and starts at the right stage, and you answer one question at a time, in your own words. When you've approved the outline, it builds the deck and the storyboard and checks every slide before you see them. Then you open them in your browser and start rehearsing."
+        "say": "Four steps, and all of them happen in the conversation. Add the skill. Then say: help me prepare my next talk. The assistant asks you to talk about the idea and who it's for. After that you answer one question at a time, in your own words. When you've approved the outline, it builds the deck and the storyboard and checks every slide before you see them. Then you open them in your browser and start rehearsing."
       },
       "sources": [
         {
@@ -660,20 +658,20 @@
       "timing": "30s",
       "energy": "calm",
       "content": {
-        "heading": "Start your next talk with one sentence",
+        "heading": "Start your next talk out loud",
         "component": "action-list",
         "data": {
           "items": [
-            "Write the one thought you want to test",
-            "Talk it through for five minutes, unedited",
-            "Hand both to your assistant with the skill"
+            "Talk about the idea for five minutes, unedited",
+            "Say who it's for and what kind of event it is",
+            "Let your assistant take it from there, with the skill"
           ]
         },
         "footer": "github.com/JW-Sthlm/slidemaster-framework. Built by Johan Wallquist, MIT licensed."
       },
       "notes": {
         "do": "End on the first action. Leave the slide up.",
-        "say": "So here's my ask. Before you open a single slide for your next talk, write one sentence with the thought you want to test. Talk it through for five minutes and keep the transcript. Then give both to your assistant, with the skill added, and say: help me prepare my next talk. The repository is open and MIT licensed, so take what works for you. And if you build something better, tell me. Thanks."
+        "say": "So here's my ask. Before you open a single slide for your next talk, talk about the idea. Five minutes, out loud and unedited. Not the whole talk, just the thought you want to test. And while you're at it, say who'll be in the room and what kind of event it is. Do it straight into your assistant, with the skill added. Then let it take over. The repository is open and MIT licensed, so take what works for you. And if you build something better, tell me. Thanks."
       },
       "sources": [
         {

@@ -1,6 +1,6 @@
 ---
 name: slidemaster-framework
-description: "Helps a presenter take a talk from a raw idea to a rehearsed presentation in eight stages: idea, voice prompt, research, context, planning, outline, deck and rehearsal. Use when someone wants to prepare, write, build, review or rehearse a talk, keynote, workshop or presentation, or says 'help me prepare my next talk'. Builds a narrative-first deck and a storyboard with the full script and timing, and compares timed rehearsal runs with the plan."
+description: "Helps a presenter take a talk from a raw idea to a rehearsed presentation in six stages: the idea as a voice prompt, research, planning, outline, deck and rehearsal. Use when someone wants to prepare, write, build, review or rehearse a talk, keynote, workshop or presentation, or says 'help me prepare my next talk'. Builds a narrative-first deck and a storyboard with the full script and timing, and compares timed rehearsal runs with the plan."
 ---
 
 # Slidemaster Framework
@@ -34,55 +34,51 @@ Paths in this skill are relative to the folder that holds this `SKILL.md`. If yo
 
 In Copilot Cowork, offer both built files for download. If the preview does not show the slides, the presenter downloads both files to one folder and opens the deck in a browser.
 
-## The eight stages
+## The six stages
 
 | # | Stage | Purpose | Artifact | Exit gate |
 |---|---|---|---|---|
-| 1 | Idea | A thought worth testing | `idea.md` | The presenter confirms it in their own words |
-| 2 | Voice prompt | Talk it through, unedited | `voice-prompt.md` | Verbatim transcript saved, extraction confirmed |
-| 3 | Research | Facts and counterarguments | `research.md` | Every core claim sourced or flagged, each with its strongest counterargument |
-| 4 | Context | Your own decks and notes | `context.md` | Reuse list agreed |
-| 5 | Planning | Audience, goal and time | `plan.md` and the spec's `meta` | Chapter budgets add up to the talk time |
-| 6 | Outline ↻ | Most iterations | Spec slides with timing and notes, versioned | The checks pass and the presenter approves a version |
-| 7 | Deck ↻ | Slide by slide | The deck and the storyboard | Visual review passes and the presenter approves each chapter |
-| 8 | Rehearsal | Until it sticks | `rehearsal-log.md` | Two runs in a row land within the slot |
+| 1 | Idea | Talked in, unedited, with the audience and the event | `idea.md` | Verbatim voice prompt saved, and the presenter confirms the extraction keeps their meaning |
+| 2 | Research | Facts, counterarguments and your own material | `research.md` | Every core claim sourced or flagged, each with its strongest counterargument, and the reuse list agreed |
+| 3 | Planning | Goal, structure and time | `plan.md` and the spec's `meta` | Chapter budgets add up to the talk time |
+| 4 | Outline ↻ | Most iterations | Spec slides with timing and notes, versioned | The checks pass and the presenter approves a version |
+| 5 | Deck ↻ | Slide by slide | The deck and the storyboard | Visual review passes and the presenter approves each chapter |
+| 6 | Rehearsal | Until it sticks | `rehearsal-log.md` | Two runs in a row land within the slot |
 
 Templates for every artifact live in `stages/`. Copy them into the talk's own folder and fill them in from the conversation.
 
 Stages run in order, and any stage can send work back: research can change the plan, and a rehearsal can change the outline. Outline and Deck are loops, so expect many rounds and never cap the rounds the presenter drives.
 
-Start by finding where the talk stands. If stage files exist, read them and continue from the first open gate. If nothing exists yet, start with the idea.
+Start by finding where the talk stands. If stage files exist, read them and continue from the first open gate. If nothing exists yet, start with the idea. A talk started with the earlier eight-stage version may also have `voice-prompt.md` and `context.md`: read them as part of the idea and the research, and leave them in place.
 
 ### 1. Idea
 
-Write down the thought the presenter wants to test, why it matters now, and the event facts already known: event, date, slot, language and audience. Ask questions when the idea is unclear, but do not sharpen, reframe or improve it.
+The idea arrives as a voice prompt. Ask the presenter to talk about it as it comes, out loud and unedited, by dictation or as a typed stream of thought. It is the idea, not a run-through of the talk, so never ask for chapters, slides or a walk-through at this stage. Ask them to say in the same take who the audience is, what kind of event it is, how long the slot is and which language the talk is in. When the idea already came up in the conversation, as dictated messages or a request and the replies to your questions, that is the voice prompt: use it as it is.
 
-### 2. Voice prompt
+Save the transcript verbatim in `idea.md` under a dated heading. Never correct its grammar, spelling, order or wording, and give later rounds their own dated sections. Below it, extract the thought to test, the audience and event facts, the claims, stories, examples, numbers to check and open questions, each anchored with a short quote. When the audience, the event or the slot is missing, ask, one question at a time and at most three.
 
-Ask the presenter to talk the idea through without editing, by dictation or as a typed stream. Save the transcript verbatim. Below it, list the claims, stories, examples, numbers to check and open questions, each anchored with a short quote. The transcript is the presenter's raw thinking: never correct or summarize it in place.
+Never sharpen, reframe or improve the idea. Questions are allowed. Rewrites are not.
 
-### 3. Research
+### 2. Research
 
-For each core claim, record what holds with source and date, the strongest counterargument, the real numbers, and a verdict: holds, narrow it or drop it. End with at most three questions for the presenter. Research claims in parallel when the runtime allows it.
+For each core claim, record what holds with source and date, the strongest counterargument, the real numbers, and a verdict: holds, narrow it or drop it. Research claims in parallel when the runtime allows it.
 
-Do not write hooks, angles or new wording for the presenter's claims. Keep restricted sources out of anything that will be shared.
+Then search the presenter's own material: earlier decks, talks, notes, demos and stories. List what can be reused in `research.md`, with a link and a decision for each item: reuse, adapt or leave. Reuse beats rebuilding.
 
-### 4. Context
+End with at most three questions for the presenter. Do not write hooks, angles or new wording for the presenter's claims. Keep restricted sources out of anything that will be shared.
 
-Search the presenter's own material: earlier decks, talks, notes, demos and stories. List what can be reused, with a link and a decision for each item: reuse, adapt or leave. Reuse beats rebuilding.
+### 3. Planning
 
-### 5. Planning
-
-Agree on:
+Start from the audience and the event in the idea. Confirm them with the presenter and fill the gaps, then agree on:
 
 - the audience: who they are, what they believe and what they doubt
 - the goal: one action the audience should take (`meta.audienceAction`)
 - the central claim in one sentence (`meta.centralClaim`)
 - language and talk time (`meta.durationMinutes`)
-- chapters with minute budgets that add up to the talk time (`meta.chapters`)
+- the structure: chapters with minute budgets that add up to the talk time (`meta.chapters`)
 - demos and audience moments
 
-### 6. Outline ↻
+### 4. Outline ↻
 
 Turn the plan into slides in the deck specification. Start from `examples/deck-spec.example.json` and the schema in `schema/deck-spec.schema.json`. Every slide needs a unique kebab-case ID, an act, one clear heading, one supported component, timing, and speaker notes with `say` and an optional `do`. Add `sources` to slides that make factual claims.
 
@@ -110,7 +106,7 @@ Before the presenter approves a version, check:
 - Does the opening create interest without background exposition?
 - Does the final slide tell the audience what to do?
 
-### 7. Deck ↻
+### 5. Deck ↻
 
 Build the deck and the storyboard from the approved spec:
 
@@ -122,7 +118,7 @@ Without Node.js, build both files as described in `references/without-scripts.md
 
 Review visually after every build. With browser automation, check every slide at presentation size for clipped or overflowing content, readable type, deliberate title wrapping, consistent spacing, contrast, keyboard navigation and correct notes. Without it, walk through the same list with the presenter. Then polish slide by slide, or chapter by chapter, with the presenter. Keep a copy of each reviewed draft.
 
-### 8. Rehearsal
+### 6. Rehearsal
 
 Rehearse with the storyboard. It shows every slide with its notes, its timing and the running clock.
 

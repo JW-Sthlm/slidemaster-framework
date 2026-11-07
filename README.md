@@ -1,10 +1,10 @@
 # Slidemaster Framework
 
-Slidemaster helps you take a talk from a raw idea to a rehearsed presentation with an AI assistant. You talk the idea through and make the calls. The assistant does the research and the planning, builds the deck and a storyboard with the full script, and compares your timed rehearsals with the plan.
+Slidemaster helps you take a talk from a raw idea to a rehearsed presentation with an AI assistant. You talk about the idea and make the calls. The assistant does the research and the planning, builds the deck and a storyboard with the full script, and compares your timed rehearsals with the plan.
 
 It is a skill for Copilot Cowork, GitHub Copilot CLI and GitHub Copilot in VS Code, and it works in any assistant that supports Agent Skills. You never need to run a command or edit a file yourself.
 
-Live demo: https://jw-sthlm.github.io/slidemaster-framework/ is a 15-minute introduction to the framework and its eight stages. Open its storyboard for the full script, timing, and sources.
+Live demo: https://jw-sthlm.github.io/slidemaster-framework/ is a 15-minute introduction to the framework and its six stages. Open its storyboard for the full script, timing, and sources.
 
 The repository stays generic, with no product branding, private content, personal writing profile, or environment-specific paths.
 
@@ -37,24 +37,24 @@ The GitHub Copilot app and other assistants that support [Agent Skills](https://
 
 ### What happens next
 
-The assistant works out where your talk stands and runs the next stage with you, one question at a time. At every gate it stops for your call. It writes the talk into one file, checks it, and builds the deck and the storyboard from it. To change something, just say so. It updates the talk and builds again.
+The assistant works out where your talk stands. A new talk starts with you talking about the idea, and then the assistant runs each stage with you, one question at a time. At every gate it stops for your call. It writes the talk into one file, checks it, and builds the deck and the storyboard from it. To change something, just say so. It updates the talk and builds again.
 
 ### Rehearse against the clock
 
 Open the storyboard and select **Start a timed run**. The deck opens with a small timer that only you can see. Present out loud, then select **Save run** on the last slide. Give the saved file to your assistant. It compares every chapter and every slide with your plan and adds the run to your rehearsal log.
 
-## The eight stages
+## The six stages
 
 | Stage | Purpose | What it leaves behind |
 |---|---|---|
-| 1. Idea | A thought worth testing | [stages/idea.md](stages/idea.md) |
-| 2. Voice prompt | Talk it through, unedited | [stages/voice-prompt.md](stages/voice-prompt.md) |
-| 3. Research | Facts and counterarguments | [stages/research.md](stages/research.md) |
-| 4. Context | Your own decks and notes | [stages/context.md](stages/context.md) |
-| 5. Planning | Audience, goal and time | [stages/plan.md](stages/plan.md) |
-| 6. Outline | Most iterations | The full script, slide by slide, versioned |
-| 7. Deck | Slide by slide | The deck and the storyboard |
-| 8. Rehearsal | Until it sticks | [stages/rehearsal-log.md](stages/rehearsal-log.md) |
+| 1. Idea | Talked in, unedited, with the audience and the event | [stages/idea.md](stages/idea.md) |
+| 2. Research | Facts, counterarguments and your own material | [stages/research.md](stages/research.md) |
+| 3. Planning | Goal, structure and time | [stages/plan.md](stages/plan.md) |
+| 4. Outline | Most iterations | The full script, slide by slide, versioned |
+| 5. Deck | Slide by slide | The deck and the storyboard |
+| 6. Rehearsal | Until it sticks | [stages/rehearsal-log.md](stages/rehearsal-log.md) |
+
+The idea arrives as a voice prompt. You talk about it out loud, and in the same take you say who the audience is, what kind of event it is and how long you have. It is not a run-through of the talk. That comes later, in the outline.
 
 [SKILL.md](SKILL.md) describes how the assistant runs each stage and where it stops for your call.
 
@@ -68,7 +68,7 @@ In Copilot CLI and VS Code the assistant runs the scripts in `scripts/` with Nod
 
 ## What is included
 
-- `SKILL.md`: the eight-stage workflow for AI assistants
+- `SKILL.md`: the six-stage workflow for AI assistants
 - `references/without-scripts.md`: the checks, the build and the rehearsal comparison for assistants that cannot run Node.js
 - `stages/`: templates for the artifact of each stage
 - `schema/deck-spec.schema.json`: JSON Schema (draft 2020-12) for the deck specification

@@ -1,6 +1,10 @@
 # Plan
 
+Start from the audience and the event in the idea. Confirm them, then decide the goal, the structure and the time.
+
 ## Audience
+
+From the voice prompt. Confirm it and fill the gaps.
 
 - Who they are:
 - What they already believe:
@@ -20,9 +24,9 @@ One sentence. Goes into `meta.centralClaim`.
 - Q&A in minutes:
 - Talk time in minutes, which goes into `meta.durationMinutes`:
 
-## Chapters
+## Structure
 
-Budgets must add up to the talk time. They go into `meta.chapters`.
+Chapters with budgets that add up to the talk time. They go into `meta.chapters`.
 
 | Chapter | Budget in minutes | Purpose |
 |---|---|---|

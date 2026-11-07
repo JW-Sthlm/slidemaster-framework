@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.3.0 - 2026-11-07
+
+### Changed
+
+- Six stages instead of eight: idea, research, planning, outline, deck and rehearsal. The idea arrives as a voice prompt, and in the same take the presenter says who the audience is, what kind of event it is, how long the slot is and which language the talk is in. Idea and Voice prompt are now one stage, and Context is no longer a stage of its own.
+- The voice prompt is about the idea, not a run-through of the talk. `SKILL.md` tells the assistant never to ask for chapters, slides or a walk-through at that stage.
+- Research now covers the presenter's own decks and notes as well as facts and counterarguments, and its gate includes the agreed reuse list. Planning covers goal, structure and time, starting from the audience in the idea.
+- `stages/idea.md` holds the verbatim voice prompt and the extraction, including the audience and event facts. `stages/research.md` has a section for your own material, and `stages/plan.md` starts from the audience in the idea.
+- The live demo explains the six stages. "First, find the thought" shows talking about the idea, saying who it's for in the same take, research and reuse. The opening story and the closing ask follow the same order.
+- The README describes the six stages.
+
+### Removed
+
+- `stages/voice-prompt.md` and `stages/context.md`. The skill still reads them in talks started with the eight-stage version. The skill package now has 14 companion files.
+
 ## 1.2.2 - 2026-11-04
 
 ### Added
